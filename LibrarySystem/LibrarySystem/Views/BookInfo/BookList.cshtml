@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "图书列表";
+}
+@model LibrarySystem.Admin.Models.BookInfoVM
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+
+                    <form action="/BookInfo/BookList" method="get">
+                        <div class="row" style="padding:10px 10px;">
+                            <div class="col-sm-3">
+                                学校名称：
+                                <select class="form-control inline" style="width:70%;" name="QueryUId">
+                                    <option value="0">请选择学校</option>
+                                    @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                    {
+                                        foreach (var item in Model.UinversityList)
+                                        {
+                                            if (Model.QueryUId == item.UniversityId)
+                                            {
+                                                <option selected="selected" value="@item.UniversityId">@item.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.UniversityId">@item.Name</option>
+                                            }
+
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                图书类别：
+                                <input type="text" name="QueryCategory" class="form-control inline" style="width:60%;" placeholder="请输入图书类别" value="@(Model.QueryCategory??"")">
+                            </div>
+                            <div class="col-sm-3">
+                                图书名称：
+                                <input type="text" name="QueryName" class="form-control inline" style="width:60%;" placeholder="请输入图书名称" value="@(Model.QueryName??"")">
+                            </div>
+                            <div class="col-sm-3">
+                                图书ISBN：
+                                <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                            </div>
+
+                        </div>
+                        <div class="row" style="padding:10px 10px;">
+                            <div class="col-sm-3">
+                                可否预借：
+                                <select class="form-control inline" style="width:70%;" name="IsBorrow">
+                                    <option value="0">请选择类型</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.IsBorrow.可预借)">@(LibrarySystem.Domain.EnumHelp.IsBorrow.可预借.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.IsBorrow.其他)">@(LibrarySystem.Domain.EnumHelp.IsBorrow.其他.ToString())</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <button type="submit" class="btn btn-info">搜索</button>
+                            </div>
+                            <div class="col-sm-5">
+                                <lable>每人可借书</lable>
+                                <lable style="font-size:18px">@LibrarySystem.Common.CommonPara.MAX_BORROW_COUNT</lable>
+                                <lable>本，您已经借书</lable>
+                                <label style="font-size:18px">@Model.BorrowCount</label>
+                                <lable>本，您还可以借书</lable>
+                                <label style="font-size:18px">@Model.AvaliableCount</label>
+                                <lable>本。</lable>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">所属学校</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书类别</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书作者</th>
+                                    <th class="text-center">库存数量</th>
+                                    <th class="text-center">可借数量</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.UserPaging != null && Model.UserPaging.Count > 0)
+                                {
+                                    foreach (var item in Model.UserPaging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.UniversityName</td>
+                                            <td class="text-center">@item.Title</td>
+                                            <td class="text-center">@item.Category</td>
+                                            <td class="text-center">@item.Isbn</td>
+                                            <td class="text-center">@item.Author</td>
+                                            <td class="text-center">@item.Count</td>
+                                            <td class="text-center">@item.Available</td>
+                                            <td>
+                                                @if (item.IsBorrow)//可预借
+                                                {
+                                                    if (LibrarySystem.Admin.Common.Loginer.UniversityId == item.UniversityId)
+                                                    {
+                                                        //图书所在与本人所在学校一致
+                                                        <button onclick="predetermine('/BookInfo/PreBook','/BookInfo/BookList',@item.BookInfoId,@LibrarySystem.Admin.Common.Loginer.AccountId)" class="btn btn-primary"><i class="fa fa-check padding-right-4"></i>&nbsp;预借</button>
+                                                    }
+                                                    else
+                                                    { 
+                                                        //校外人员借书  填写运书方式
+                                                        <a href="/BookInfo/PreBook?BookInfoId=@item.BookInfoId&SysAccountId=@LibrarySystem.Admin.Common.Loginer.AccountId" class="btn btn-primary"><i class="fa fa-check padding-right-4"></i>&nbsp;预借</a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (item.Available <= 0)
+                                                    {
+                                                        <label>库存不足</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>已预借此书</label>
+                                                    }
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/BookInfo/BookList" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.UserPaging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script type="text/javascript">
+        //缴费并还书
+        var predetermine = function (url, skipUrl, BookInfoId, SysAccountId) {
+            swal({
+                title: "您确定要预借此书吗",
+                text: "确认将预借此书，请谨慎操作！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "是的，我要预借此书！",
+                cancelButtonText: "让我再考虑一下…",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    window.parent.showModal();
+                    $.post(url, { BookInfoId: BookInfoId, SysAccountId: SysAccountId }, function (data) {
+                        if (data.Status == 200) {
+                            swal("预借此书成功！", "您已经预借此书。", "success");
+                            setTimeout(function () {
+                                //window.location.href = skipUrl;
+                                window.location.href = location.href;
+                            }, 1500);
+                        } else {
+                            swal("提示", "预借此书失败");
+                        }
+                    }).complete(function () { window.parent.hideModal(); });
+                } else {
+                    swal("已取消", "您取消了预借此书操作！", "error");
+                }
+            });
+        };
+    </script>
+}

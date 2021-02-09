@@ -1,0 +1,9 @@
+G:\production\Project\LibrarySystem\LibrarySystem.Domain\bin\Release\LibrarySystem.Domain.dll
+G:\production\Project\LibrarySystem\LibrarySystem.Domain\bin\Release\LibrarySystem.Domain.pdb
+G:\production\Project\LibrarySystem\LibrarySystem.Domain\obj\Release\LibrarySystem.Domain.dll
+G:\production\Project\LibrarySystem\LibrarySystem.Domain\obj\Release\LibrarySystem.Domain.pdb
+G:\project\LibrarySystem\LibrarySystem.Domain\bin\Release\LibrarySystem.Domain.dll
+G:\project\LibrarySystem\LibrarySystem.Domain\bin\Release\LibrarySystem.Domain.pdb
+G:\project\LibrarySystem\LibrarySystem.Domain\obj\Release\LibrarySystem.Domain.csprojResolveAssemblyReference.cache
+G:\project\LibrarySystem\LibrarySystem.Domain\obj\Release\LibrarySystem.Domain.dll
+G:\project\LibrarySystem\LibrarySystem.Domain\obj\Release\LibrarySystem.Domain.pdb

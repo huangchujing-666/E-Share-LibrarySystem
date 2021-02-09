@@ -1,0 +1,128 @@
+﻿@{
+    ViewBag.Title = "漂流图书列表";
+}
+@using LibrarySystem.Domain;
+@model LibrarySystem.Admin.Models.AsideBookInfoVM
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/AsideBookInfo/List" method="get">
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    所在学校：
+                                    <select class="form-control inline" style="width:70%;" name="QueryUId">
+                                        <option value="0">请选择图书所在学校</option>
+                                        @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                        {
+                                            foreach (var item in Model.UinversityList)
+                                            {
+                                                if (Model.QueryUId == item.UniversityId)
+                                                {
+                                        <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                }
+                                                else
+                                                {
+                                        <option value="@item.UniversityId">@item.Name</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    图书类别：
+                                    <input type="text" name="QueryCategory" class="form-control inline" style="width:60%;" placeholder="请输入图书类别" value="@(Model.QueryCategory??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书名称：
+                                    <input type="text" name="QueryName" class="form-control inline" style="width:60%;" placeholder="请输入图书名称" value="@(Model.QueryName??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书ISBN：
+                                    <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                                </div>
+                            </div>
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    <button type="submit" class="btn btn-info">搜索</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">图片</th>
+                                    <th class="text-center">图书所在学校</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书类别</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书作者</th>
+                                    <th class="text-center">可借数量</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                @if (item.BaseImage != null && item.BaseImage.BaseImageId > 0)
+                                                {
+                                                    <img src="@(item.BaseImage.Source + item.BaseImage.Path)" class="kv-preview-thumb kv-file-content file-preview-image" style="width:80px; height:120px;" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="" class="kv-preview-thumb kv-file-content file-preview-image" title="图片不见啦~" style="width:80px; height:120px;" />
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.University.Name</td>
+                                            <td class="text-center">@item.Title</td>
+                                            <td class="text-center">@item.Category</td>
+                                            <td class="text-center">@item.Isbn</td>
+                                            <td class="text-center">@item.Author</td>
+                                            <td class="text-center"><label class="red-line">@item.Available</label></td>
+                                            <td>
+                                                @if (LibrarySystem.Admin.Common.Loginer.UniversityId == item.UniversityId)
+                                                {
+
+                                                    if (item.Status == (int)EnumHelp.EnabledEnum.无效)
+                                                    {
+                                                        <button onclick="enable('/AsideBookInfo/UpdateStatus?AsideBookInfoId=@item.AsideBookInfoId&Status=@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.有效)','/AsideBookInfo/List','@item.AsideBookInfoId','@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.有效)')" class="btn btn-primary"><i class="fa fa-check padding-right-4"></i>&nbsp;启用</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="/AsideBookInfo/Edit?AsideBookInfoId=@item.AsideBookInfoId" class="btn btn-info"><i class="fa fa-paste padding-right-4"></i>&nbsp;编辑</a>
+                                                        <button onclick="disable('/AsideBookInfo/UpdateStatus?AsideBookInfoId=@item.AsideBookInfoId&Status=@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.无效)','/AsideBookInfo/List','@item.AsideBookInfoId','@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.无效)')" class="btn btn-warning"><i class="fa fa-warning padding-right-4"></i>&nbsp;禁用</button>
+                                                    }
+                                                    <button onclick="del('/AsideBookInfo/Delete','/AsideBookInfo/List','@item.AsideBookInfoId')" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;删除</button>
+                                                }
+                                                else {
+                                                    <label><b>非本校管理员无法进行操作</b></label>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/AsideBookInfo/Edit" class="btn btn-info" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;添加</a>
+                                <a href="/AsideBookInfo/List" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

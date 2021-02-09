@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "漂流图书订单列表";
+}
+@model LibrarySystem.Admin.Models.AsideBookOrderVM
+@using LibrarySystem.Domain;
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/AsideBookOrder/MyTransRecord" method="get">
+                            <div class="row" style="padding:10px 10px;">
+
+                                @*目的地（求书人所在学校） 是否有偿 是否已接单 图书isbn*@
+                                <div class="col-sm-3">
+                                    收书人学校：
+                                    <select class="form-control inline" style="width:60%;" name="QueryUId">
+                                        <option value="0">请选择学校</option>
+                                        @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                        {
+                                            foreach (var item in Model.UinversityList)
+                                            {
+                                                if (item.UniversityId == LibrarySystem.Admin.Common.Loginer.UniversityId)
+                                                {
+                                                    continue;
+                                                }
+                                                if (Model.QueryUId == item.UniversityId)
+                                                {
+                                                    <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.UniversityId">@item.Name</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    是否有偿：
+                                    <select class="form-control inline" style="width:60%;" name="QueryPayType">
+                                        <option value="0">请选择是否有偿</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchPayType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.ResearchPayType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryPayType == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    是否已接送：
+                                    <select class="form-control inline" style="width:60%;" name="QueryTrafType">
+                                        <option value="0">请选择接送状态</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.MyTransferStatus)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.MyTransferStatus), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryIsMyRecord == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    图书ISBN：
+                                    <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                                </div>
+                            </div>
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    <button type="submit" class="btn btn-info">搜索</button>
+                                </div>
+                                <div class="col-sm-5">
+                                    <lable>您在漂流平台中帮助其他用户运书</lable>
+                                    <label style="font-size:18px">@Model.TrafficCount</label>
+                                    <lable>次,赚取酬劳共计</lable>
+                                    <label style="font-size:18px">@Model.TotalTrafficFee</label>
+                                    <lable>元。</lable>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">图书图片</th>
+                                    <th class="text-center">收书人</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书类别</th>
+                                    <th class="text-center">收书人所在学校</th>
+                                    <th class="text-center">答谢方式</th>
+                                    <th class="text-center">接送状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                @if (item.AsideBookInfo.BaseImage != null && item.AsideBookInfo.BaseImage.BaseImageId > 0)
+                                                {
+                                                    <img src="@(item.AsideBookInfo.BaseImage.Source + item.AsideBookInfo.BaseImage.Path)" class="kv-preview-thumb kv-file-content file-preview-image" style="width:80px; height:120px;" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="" class="kv-preview-thumb kv-file-content file-preview-image" title="图片不见啦~" style="width:80px; height:120px;" />
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.SysAccount.Account</td>
+                                            <td class="text-center">@item.AsideBookInfo.Title</td>
+                                            <td class="text-center">@item.AsideBookInfo.Isbn</td>
+                                            <td class="text-center">@item.AsideBookInfo.Category</td>
+                                            <td class="text-center">@item.SysAccount.University.Name</td>
+                                            <td class="text-center">
+                                                @if (item.TrafficFee <= 0)
+                                                {
+                                                    <label>无偿</label>
+                                                }
+                                                else
+                                                {
+                                                    <label>有偿</label>
+                                                    <label>@item.TrafficFee</label><label>元</label>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.TrafficAccountId <= 0)//当无运输人接单
+                                                {
+                                                    if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.待顺风送)
+                                                    {
+                                                        <label class="red-line">待顺风送</label>
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.已取消)
+                                                    {
+                                                        <label class="red-line">已取消</label>
+                                                    }
+
+                                                }
+                                                else if (item.TrafficAccountId > 0)//当有运输人接单  且运输中
+                                                {
+                                                    if (item.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//我是收件人  可以看到送书人信息
+                                                    {
+                                                        if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.运输中)
+                                                        {
+                                                            <label class="red-line">运输中，</label><br />
+                                                        }
+                                                        else
+                                                        {
+                                                            <label class="red-line">等待运书人取书，</label><br />
+                                                        }
+                                                        <label class="red-line">运输人信息：</label><br />
+                                                        <label class="red-line">@item.SenderInfo</label>
+                                                    }
+                                                    else if (item.TrafficAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//我是运输人 只能看到 收件人信息
+                                                    {
+                                                        if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.运输中)
+                                                        {
+                                                            <label class="red-line">运输中，</label><br />
+                                                        }
+                                                        <label class="red-line">收书人电话：</label>
+                                                        <label class="red-line">@item.SysAccount.MobilePhone</label><br />
+                                                        <label class="red-line">收书人地址：</label>
+                                                        <label class="red-line">@item.SysAccount.Address</label>
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.运输中)
+                                                    {
+                                                        <label class="red-line">图书运输中</label>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.TrafficAccountId <= 0)//当无人接送的时候
+                                                {
+                                                    if (item.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//本人为收书人
+                                                    {
+                                                        if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.待顺风送)
+                                                        {
+                                                            //修改按钮????????
+                                                            <a href="/AsideBookOrder/EditTransInfo?AsideBookOrderId=@item.AsideBookOrderId&SysAccountId=@item.SysAccountId" class="btn btn-info" data-refresh="0"><i class="fa fa-paste padding-right-4"></i>&nbsp;修改运书方式</a>
+                                                            //取消此单按钮
+                                                            <button onclick="awaitCalcle('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/MyTransRecord','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已取消)')" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>
+                                                        }
+                                                        else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.已取消)
+                                                        {
+                                                            <label>订单已失效！</label>
+                                                        }
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.待顺风送)//本人非收书人
+                                                    {
+                                                        //进行顺风送按钮
+                                                        <a href="/AsideBookOrder/EditTransInfo?AsideBookOrderId=@item.AsideBookOrderId&TrafficAccountId=@LibrarySystem.Admin.Common.Loginer.AccountId" class="btn btn-info" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;接送此书</a>
+                                                    }
+
+                                                }
+                                                else if (item.TrafficAccountId > 0)//有人接送的时候
+                                                {
+                                                    if (item.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//本人为收书人
+                                                    {
+                                                        if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.运输中)
+                                                        {
+                                                            //收到图书按钮
+                                                            <button onclick="orderConfirm('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/MyGetAsideBook','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已完结)')" class="btn btn-primary" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;已收到图书</button>
+                                                        }
+                                                        else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.已完结)
+                                                        {
+                                                            <label>送书已完成！</label>
+                                                        }
+                                                    }
+                                                    else if (item.TrafficAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//本人为送书人
+                                                    {
+                                                        if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.已完结)
+                                                        {
+                                                            <label>送书已完成！</label>
+                                                        }
+                                                        else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.运输中)
+                                                        {
+                                                            //送书完成按钮
+                                                            <button onclick="orderConfirm('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/MyGetAsideBook','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已完结)')" class="btn btn-primary" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;图书已送达</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            //编辑界面
+                                                            <a href="/AsideBookOrder/EditTransInfo?AsideBookOrderId=@item.AsideBookOrderId&TrafficAccountId=@item.TrafficAccountId" class="btn btn-info" data-refresh="0"><i class="fa fa-paste padding-right-4"></i>&nbsp;修改运书信息</a>
+                                                            //取消送书
+                                                            <button onclick="awaitCalcle('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/MyTransRecord','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.待顺风送)')" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;取消运书</button>
+                                                        }
+                                                    }
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/AsideBookOrder/MyTransRecord" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/ViewJs/AsideBookOrder/MyTransRecord.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+}
+

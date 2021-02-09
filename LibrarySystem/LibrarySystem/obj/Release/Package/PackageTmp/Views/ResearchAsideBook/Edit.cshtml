@@ -1,0 +1,277 @@
+﻿@{
+    ViewBag.Title = "发布求书信息";
+}
+@model LibrarySystem.Admin.Models.ResearchAsideBookVM
+@using LibrarySystem.Admin.Common;
+@using LibrarySystem.Domain;
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        发布求书信息 <small>添加、修改</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal">
+                        <input type="hidden" name="ResearchAsideBookId" id="ResearchAsideBookId" value="@Model.ResearchAsideBookId">
+                        <input type="hidden" name="SysAccountId" id="SysAccountId" value="@Model.SysAccountId">
+                        <input type="hidden" id="imgInfoId" value="@Model.ImgInfo.BaseImageId" />
+                        <input type="hidden" id="oldImgInfoId" value="@Model.ImgInfo.BaseImageId" />
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图片</label>
+                            <div class="col-sm-6">
+                                <input id="filename" name="filename" type="file" class="file-loading" multiple data-show-upload="true" data-show-caption="true">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">发布人所在学校</label>
+                            <div class="col-sm-4">
+                                @*对原记录进行编辑*@
+                                @if (Model.ResearchAsideBookId > 0)
+                                {
+                                <select class="form-control inline" disabled="disabled" style="width:150px;" name="UniversityId" id="UniversityId">
+                                    <option value="0">请选择所在学校</option>
+                                    @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                        {
+                                            foreach (var item in Model.UinversityList)
+                                            {
+                                                if (Model.UniversityId == @item.UniversityId)
+                                                {
+                                    <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                }
+                                                else
+                                                {
+                                    <option value="@item.UniversityId">@item.Name</option>
+                                                }
+                                            }
+                                        }
+                                </select>
+                                }
+                                @*新增的记录*@
+                                else
+                                {
+                                <select class="form-control inline" disabled="disabled" style="width:150px;" name="UniversityId" id="UniversityId">
+                                    <option value="0">请选择所在学校</option>
+                                    @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                        {
+                                            foreach (var item in Model.UinversityList)
+                                            {
+                                                if (LibrarySystem.Admin.Common.Loginer.UniversityId == @item.UniversityId)
+                                                {
+                                    <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                }
+                                                else
+                                                {
+                                    <option value="@item.UniversityId">@item.Name</option>
+                                                }
+                                            }
+                                        }
+                                </select>
+                                }
+                            </div>
+                            <label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">求书人账户</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" readonly="readonly" placeholder="请输入求书人账户" maxlength="100" name="SearchAccountName" id="SearchAccountName" value="@(Model.SearchAccountName??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图书类别</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入图书类别" maxlength="100" name="Category" id="Category" value="@(Model.Category??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图书名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入图书名称" maxlength="100" name="Title" id="Title" value="@(Model.Title??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图书ISBN</label>
+                            <div class="col-sm-4">
+                                @if (Model.ResearchAsideBookId > 0)
+                                {
+                            <input type="text" class="form-control" readonly="readonly" placeholder="请输入图书ISBN" maxlength="100" name="Isbn" id="Isbn" value="@(Model.Isbn ?? "")">
+                                }
+                                else
+                                {
+                            <input type="text" class="form-control" placeholder="请输入图书ISBN" maxlength="100" name="Isbn" id="Isbn" value="@(Model.Isbn ?? "")">
+                                }
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">作者</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入作者" maxlength="100" name="Author" id="Author" value="@(Model.Author??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">出版时间</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入出版时间" maxlength="100" name="PublicDate" id="PublicDate" value="@(Model.PublicDate??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">寻书方式</label>
+                            <div class="col-sm-4">
+                                <select class="form-control inline" style="width:60%;" onchange="selectChange()" name="PayType" id="PayType">
+                                    <option value="0">请选择寻书方式</option>
+                                    @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchPayType)))
+                                    {
+                                        string strName = Enum.GetName(typeof(EnumHelp.ResearchPayType), myCode);//获取名称
+                                        string strVaule = myCode.ToString();//获取值
+                                        if (Model.PayType == int.Parse(strVaule))
+                                        {
+                                    <option value="@strVaule" selected="selected">@strName</option>
+                                        }
+                                        else
+                                        {
+                                    <option value="@strVaule">@strName</option>
+                                        }
+                                    }
+                                </select>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group paytype-select">
+                            <label class="col-sm-2 control-label">有偿金额</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" placeholder="请输入有偿金额" maxlength="100" name="PayMoney" id="PayMoney" value="@(Model.PayMoney)">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed paytype-select"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">运书方式</label>
+                            <div class="col-sm-4">
+                                <select class="form-control inline" style="width:60%;" name="TrafficType" id="TrafficType">
+                                    <option value="0">请选择运书方式</option>
+                                    @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.TrafficType)))
+                                    {
+                                        string strName = Enum.GetName(typeof(EnumHelp.TrafficType), myCode);//获取名称
+                                        string strVaule = myCode.ToString();//获取值
+                                        if (int.Parse(strVaule) != (int)EnumHelp.TrafficType.顺路送书)//求书方式 不给予顺路送书
+                                        {
+                                            if (Model.TrafficType == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电子邮箱</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入电子邮箱" maxlength="100" name="Email" id="Email" value="@(Model.SysAccount.Email??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系方式</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入联系方式" maxlength="100" name="MobilePhone" id="MobilePhone" value="@(Model.SysAccount.MobilePhone??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系地址</label>
+                            <div class="col-sm-4">
+                                <textarea placeholder="请输入地址。如：广州市天河区中山大道西293号 广东技术师范大学 学生宿舍A栋101室" id="Address" name="Address" cols="50" rows="5" style="overflow:hidden">@Model.SysAccount.Address</textarea>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注信息</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入备注信息" maxlength="1000" name="Remark" id="Remark" value="@(Model.Remark??"")">
+                            </div><label class="red-line"></label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button id="btnSave" class="btn btn-primary" type="button">保存内容</button>
+                                <a class="btn btn-white" href="javascript:history.go(-1);">取消</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/ViewJs/ResearchAsideBook/researchAsideBookEdit.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script type="text/javascript">
+
+
+        function selectChange() {
+            var PayType = $('#PayType option:selected');
+            switch (parseInt(PayType.val())) {
+                //有偿 = 1,
+                // 无偿 = 2
+                case 1:
+                    $(".paytype-select").css("display", "block");
+                    break;
+                case 2:
+                    $(".paytype-select").css("display", "none");
+                    break;
+                default:
+                    $(".traffic-address").css("display", "none");
+            }
+        }
+
+        //缩略图
+        var img = [];
+        if ('@Model.ImgInfo.Path' != '') {
+            var str = '<img src="@(Model.ImgInfo.Source + Model.ImgInfo.Path)" class="kv-preview-thumb kv-file-content file-preview-image" />';
+            img.push(str);
+        }
+        $('#filename').fileinput({
+            language: 'zh',
+            allowedFileTypes: ['image'],
+            allowedFileExtensions: ['jpg', 'png', 'gif'],
+            uploadUrl: '/Uploader/ImgFile?folder=AsideBookInfo&title=漂流图书图像',
+            showUpload: false,  //是否显示上传按钮
+            showRemove: true,   //显示移除按钮
+            maxFileSize: 2000,
+            showCaption: true,  //是否显示标题
+            maxFileCount: 1,    //表示允许同时上传的最大文件个数
+            maxFileSize: 1024,   //单位为kb，如果为0表示不限制文件大小
+            initialPreview: img,
+            dropZoneTitle: '请选择需要上传的图片(200px*200px)',
+        });
+        //上传成功回调事件
+        $("#filename").on("fileuploaded", function (event, data, previewId, index) {
+            $('#imgInfoId').val(data.response);
+        });
+        //移除事件
+        $("#filename").on("fileclear", function (event, data, previewId, index) {
+            $.post("/Uploader/DeleteFile", { Id: $('#imgInfoId').val() }, function (data) { });
+        });
+
+    </script>
+}
+
+
+

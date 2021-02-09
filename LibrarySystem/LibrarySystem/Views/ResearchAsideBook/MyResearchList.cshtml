@@ -1,0 +1,349 @@
+﻿
+@{
+    ViewBag.Title = "我的'求'书列表";
+}
+@model LibrarySystem.Admin.Models.ResearchAsideBookVM
+@using LibrarySystem.Domain;
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/ResearchAsideBook/MyResearchList" method="get">
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    图书名称：
+                                    <input type="text" name="QueryName" class="form-control inline" style="width:60%;" placeholder="请输入图书名称" value="@(Model.QueryName??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书ISBN：
+                                    <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书类别：
+                                    <input type="text" name="QueryCategory" class="form-control inline" style="width:60%;" placeholder="请输入图书类别" value="@(Model.QueryCategory??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    求书方式：
+                                    <select class="form-control inline" style="width:60%;" name="QueryPayType">
+                                        <option value="0">请选择求书方式</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchPayType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.ResearchPayType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryPayType == int.Parse(strVaule))
+                                            {
+                                        <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                        <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    求书状态：
+                                    <select class="form-control inline" style="width:60%;" name="QueryResearchStatus">
+                                        <option value="-1">请选择求书状态</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchStatus)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.ResearchStatus), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryResearchStatus == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    @if (Model.QueryIsMyResearch == (int)EnumHelp.IsMyResearch.我的求书)
+                                    {
+                                        <input type="radio" name="QueryIsMyResearch" checked="checked" id="QueryIsMyResearch" value="1" /><label> 我的求书</label>
+                                        <input type="radio" name="QueryIsMyResearch" id="QueryIsMyResearch" value="-1" /><label> 全部求书</label>
+                                    }
+                                    else
+                                    {
+                                        <input type="radio" name="QueryIsMyResearch" id="QueryIsMyResearch" value="1" /><label> 我的求书</label>
+                                        <input type="radio" name="QueryIsMyResearch" checked="checked" id="QueryIsMyResearch" value="-1" /><label> 全部求书</label>
+                                    }
+                                </div>
+                                <div class="col-sm-3">
+                                    <button type="submit" class="btn btn-info">搜索</button>
+                                    <a href="https://www.kuaidi100.com/" target="_blank" style="text-decoration:none;"><button type="button" class="btn btn-info" style="float:right">快递查询</button></a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <lable>您在漂流平台中顺利求书</lable>
+                                    <label style="font-size:18px">@Model.ResearchSuccessfulCount</label>
+                                    <lable>本。</lable>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">图片</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书作者</th>
+
+                                    <th class="text-center">求书人</th>
+                                    <th class="text-center">求书人学校</th>
+
+                                    <th class="text-center">求书方式</th>
+                                    <th class="text-center">运书方式</th>
+                                    <th class="text-center">求书状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                @if (item.BaseImage != null && item.BaseImage.BaseImageId > 0)
+                                                {
+                                                    <img src="@(item.BaseImage.Source + item.BaseImage.Path)" class="kv-preview-thumb kv-file-content file-preview-image" style="width:80px; height:120px;" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="" class="kv-preview-thumb kv-file-content file-preview-image" title="图片不见啦~" style="width:80px; height:120px;" />
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.Title</td>
+                                            <td class="text-center">@item.Isbn</td>
+                                            <td class="text-center">@item.Author</td>
+                                            <td class="text-center">@item.SysAccount.Account</td>
+                                            <td class="text-center">@item.SysAccount.University.Name</td>
+                                            <td class="text-center">
+                                                @if (item.PayType != -1)
+                                                {
+                                                    string strName = Enum.GetName(typeof(EnumHelp.ResearchPayType), item.PayType);
+                                                    <label>@strName</label>
+                                                    <lable>&nbsp;@item.PayMoney</lable>
+                                                    <label>元</label>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.ResearchStatus != -1)
+                                                {
+                                                    string strName = Enum.GetName(typeof(EnumHelp.TrafficType), item.TrafficType);
+                                                    <label>@strName</label>
+                                                    if (item.TrafficType == (int)EnumHelp.TrafficType.邮寄 && item.ExpressId > 0)
+                                                    {
+                                                        <label>@item.Express.ExpressName</label>
+                                                        <label>@item.Express.ExpressNo</label>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.ResearchStatus != -1)
+                                                {
+                                                    if (item.ShareSysAccountId > 0 && item.ResearchStatus == (int)EnumHelp.ResearchStatus.求书中)
+                                                    {
+                                                        <label class="red-line">找到书源，待入库</label>
+                                                    }
+                                                    else if (item.ShareSysAccountId > 0 && item.ResearchStatus == (int)EnumHelp.ResearchStatus.找到书源)
+                                                    {
+                                                        if (item.TrafficType == (int)EnumHelp.TrafficType.邮寄)
+                                                        {
+                                                            if (item.ExpressId > 0)
+                                                            {
+                                                                <label class="red-line">已邮寄，邮寄费用：</label>
+                                                                <label class="red-line">@item.Express.TrafficFee</label>
+                                                                <label class="red-line">元</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label class="red-line">已入库，待邮寄</label>
+                                                            }
+                                                        }
+                                                        else if (item.TrafficType == (int)EnumHelp.TrafficType.自取)
+                                                        {
+                                                            <label class="red-line">已入库，待自取</label>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        string strName = Enum.GetName(typeof(EnumHelp.ResearchStatus), item.ResearchStatus);
+                                                        <label class="red-line">@strName</label>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//本人为求书人
+                                                {
+                                                    if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.求书中)
+                                                    {
+                                                        //修改运书方式
+                                                        <a href="/ResearchAsideBook/EditCustomerInfo?ResearchAsideBookId=@item.ResearchAsideBookId&SysAccountId=@item.SysAccountId&ShareSysAccountId=0" class="btn btn-info" data-refresh="0"><i class="fa fa-paste padding-right-4"></i>&nbsp;修改运书地址</a>
+                                                        //取消求书
+                                                        <button onclick="researchConfirm('/ResearchAsideBook/UpdateResearchStatus','/ResearchAsideBook/MyResearchList','@item.ResearchAsideBookId','@((int)LibrarySystem.Domain.EnumHelp.ResearchStatus.取消求书)')" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>
+                                                    }
+                                                    else if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.取消求书)
+                                                    {
+                                                        <label>已取消求书</label>
+                                                    }
+                                                    else if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.找到书源)
+                                                    {
+                                                        if (item.ExpressId > 0 && item.TrafficType == (int)EnumHelp.TrafficType.邮寄)//自取
+                                                        {
+                                                            //确认取书按钮 自取
+                                                            <button onclick="researchConfirm('/ResearchAsideBook/UpdateResearchStatus','/ResearchAsideBook/MyResearchList','@item.ResearchAsideBookId','@((int)LibrarySystem.Domain.EnumHelp.ResearchStatus.求书成功)')" class="btn btn-primary" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;已收到此书</button>
+                                                        }
+                                                        else if (item.TrafficType == (int)EnumHelp.TrafficType.邮寄)
+                                                        {
+                                                            <label>找到书源等待邮寄</label>
+                                                        }
+                                                        else if (item.TrafficType == (int)EnumHelp.TrafficType.自取)
+                                                        {
+                                                            <label>找到书源等待自取</label>
+                                                        }
+                                                    }
+                                                    else if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.求书成功)
+                                                    {
+                                                        <label>已顺利求书!</label>
+                                                    }
+                                                }
+                                                else//本人非求书人
+                                                {
+                                                    if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.求书中)
+                                                    {
+                                                        if (item.ShareSysAccountId <= 0)
+                                                        {
+                                                            //我有此书  跳转到运书方式、联系人信息填写
+                                                            <a href="/ShareAsideBook/ShareBook?ResearchAsideBookId=@item.ResearchAsideBookId&SysAccountId=@LibrarySystem.Admin.Common.Loginer.AccountId" class="btn btn-primary"><i class="fa fa-check padding-right-4"></i>&nbsp;我有此书</a>
+                                                        }
+                                                        else if (item.ShareSysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//我是书源
+                                                        {
+                                                            //修改个人联系方式
+                                                            <a href="/ResearchAsideBook/EditCustomerInfo?ResearchAsideBookId=@item.ResearchAsideBookId&SysAccountId=0&ShareSysAccountId=@item.ShareSysAccountId" class="btn btn-info" data-refresh="0"><i class="fa fa-paste padding-right-4"></i>&nbsp;编辑个人信息</a>
+                                                            <button onclick="cancle('/ShareAsideBook/BookCancle','/ShareAsideBook/MyShareList','@item.ResearchAsideBookId')" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>
+                                                        }
+                                                    }
+                                                    else if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.取消求书)
+                                                    {
+                                                        <label>已取消求书！</label>
+                                                    }
+                                                    else if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.找到书源)
+                                                    {
+                                                        //if ()
+                                                        //{
+
+                                                        //}
+                                                        //else
+                                                        //{
+                                                            <label>已找到书源！</label>
+                                                        //}
+                                                    }
+                                                    else if (item.ResearchStatus == (int)EnumHelp.ResearchStatus.求书成功)
+                                                    {
+                                                        <label>已顺利求书！</label>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                @*<a href="/ResearchAsideBook/Edit" class="btn btn-info" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;添加</a>*@
+                                <a href="/ResearchAsideBook/Edit" class="btn btn-info" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;求书</a>
+                                <a href="/ResearchAsideBook/MyResearchList" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script type="text/javascript">
+        //确认图书领取
+        var researchConfirm = function (url, skipUrl, id, statusId) {
+            swal({
+                title: "您确定进行此操作吗",
+                text: "确认后将无法修改，请谨慎操作！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "是的，我确定！",
+                cancelButtonText: "让我再考虑一下…",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    window.parent.showModal();
+                    $.post(url, { ResearchAsideBookId: id, ResearchStatus: statusId }, function (data) {
+                        if (data.Status == 200) {
+                            swal("操作成功！", "您已经完成本次操作。", "success");
+                            setTimeout(function () {
+                                //window.location.href = skipUrl;
+                                window.location.href = location.href;
+                            }, 1500);
+                        } else {
+                            swal("提示", "确认失败");
+                        }
+                    }).complete(function () { window.parent.hideModal(); });
+                } else {
+                    swal("已取消", "您取消了本次操作！", "error");
+                }
+            });
+        };
+    
+        //取消
+        var cancle = function (url, skipUrl, id) {
+            swal({
+                title: "您确定取消此书吗",
+                text: "取消后将无法恢复，请谨慎操作！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "是的，我已确认！",
+                cancelButtonText: "让我再考虑一下…",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    window.parent.showModal();
+                    $.post(url, { ShareAsideBookId:0,ResearchAsideBookId: id }, function (data) {
+                        if (data.Status == 200) {
+                            swal("取消成功！", "您已经取消此书入库。", "success");
+                            setTimeout(function () {
+                                //window.location.href = skipUrl;
+                                window.location.href = location.href;
+                            }, 1500);
+                        } else {
+                            swal("提示", "取消失败");
+                        }
+                    }).complete(function () { window.parent.hideModal(); });
+                } else {
+                    swal("已取消", "您取消了本次操作！", "error");
+                }
+            });
+        };
+    </script>
+}
+

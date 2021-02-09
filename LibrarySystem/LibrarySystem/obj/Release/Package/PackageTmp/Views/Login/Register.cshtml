@@ -1,0 +1,112 @@
+﻿
+@{
+    Layout = null;
+}
+@model LibrarySystem.Admin.Models.RegisterVM
+@using LibrarySystem.Domain;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>E建漂流图书服务系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="">
+    <meta name="description" content="E建漂流图书服务系统">
+    <link href="/Content/bootstrap.min.css?v=1.0.1" rel="stylesheet" />
+
+    <link href="/Content/font-awesome.min.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/animate.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/style.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/plugins/sweetalert/sweetalert.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/registernew.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="mainContent" style="">
+        <div class="indexTitle">
+            <p>E建漂流</p>
+            <p>图书服务系统</p>
+        </div>
+        <div class="fromBg">
+            <h2>注册新用户</h2>
+            <form class="form-horizontal indexForm">
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <select class="form-control" name="UniversityId" id="UniversityId" value="">
+                            <option value="0">请选择学校</option>
+                            @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                            {
+                                foreach (var item in Model.UinversityList)
+                                {
+                                    <option value="@item.UniversityId">@item.Name</option>
+                                }
+                            }
+                        </select>
+                        <span class="glyphicon glyphicon-home form-control-feedback" aria-hidden="true"></span>
+
+                    </div>
+                </div>
+               
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入账户(学号/工号)" type="user" class="form-control" id="Account" name="Account" aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入密码" type="password" class="form-control" id="PassWord" name="PassWord" aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-folder-close form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                </div>
+                @*<div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入手机号" type="text" class="form-control" id="MobilePhone" name="MobilePhone" aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-phone form-control-feedback" aria-hidden="true"></span>
+
+                    </div>
+                </div>*@
+             
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入邮箱" type="text" class="form-control" id="Email" name="Email" aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-envelope form-control-feedback" aria-hidden="true"></span>
+
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入验证码" type="text" class="form-control" id="Code" name="Code" style="width:48%; float:left;" aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-comment form-control-feedback" aria-hidden="true"></span>
+                        <input  type="button" class="btn btn-primary btn-block active" id="SendCode" name="SendCode" style="width:48%; float:left;margin-left:4%; background-color:#001568;" aria-describedby="inputSuccess3Status" value="发送验证码">
+                        @*<a class="btn btn-primary btn-block active" id="SendEmail" style="float:right;width:40%;">发送验证码</a>*@
+                    </div>
+                </div>
+                <div class="form-group has-feedback groupLast">
+                    <div class="col-sm-12">
+                        <a class="btn btn-primary btn-block active" id="btnRegister" >注册</a>
+                    </div>
+                </div>
+                <div class="form-group has-feedback groupLast">
+                    <div class="col-sm-12">
+                        <a href="/Login/Login">返回登录</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="copyright">
+            <p>©2020 All Rights Reserved. E建漂流公司</p>
+        </div>
+    </div>
+    <section class="hc-banner">
+        <ul class="banner">
+            <li class="hc-bannerbg" style="background-image:url('../../images/register.jpg');">
+        </ul>
+    </section>
+    <!-- 全局js -->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="/Scripts/plugins/sweetalert/sweetalert.min.js?v=1.0.1"></script>
+    <script src="@("/Scripts/ViewJs/Login/Register.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+</body>
+</html>

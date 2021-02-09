@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "邮编信息编辑";
+}
+@using LibrarySystem.Domain;
+@model LibrarySystem.Admin.Models.BookOrderVM
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        邮编信息编辑 <small>添加、修改</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <form id="from" class="form-horizontal">
+                        <input type="hidden" class="form-control" name="BookOrderId" id="BookOrderId" value="@Model.BookOrderId">
+                        <input type="hidden" id="ExpressId" name="ExpressId" value="@Model.ExpressId" />
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图书ISBN</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="Isbn" id="Isbn" readonly="readonly" class="form-control" placeholder="请输入isbn" value="@(Model.Isbn ?? "")">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图书名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="Title" id="Title" readonly="readonly" class="form-control" placeholder="请输入图书名称" value="@(Model.Title ?? "")">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收书账户</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="Account" id="Account" readonly="readonly" class="form-control" placeholder="请输入收书账户" value="@(Model.Account ?? "")">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收书人电子邮箱</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" readonly="readonly" placeholder="请输入电子邮箱" maxlength="100" name="Email" id="Email" value="@(Model.Email??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收书人联系方式</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" readonly="readonly" placeholder="请输入联系方式" maxlength="100" name="MobilePhone" id="MobilePhone" value="@(Model.MobilePhone??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收书人联系地址</label>
+                            <div class="col-sm-4">
+                                <textarea placeholder="" readonly="readonly" id="Address" name="Address" cols="50" rows="5" style="overflow:hidden">@Model.Address</textarea>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">快递名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="ExpressName" id="ExpressName" class="form-control" placeholder="请输入快递名" value="@(Model.ExpressName ?? "")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">快递编号</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="ExpressNo" id="ExpressNo" class="form-control" placeholder="请输入快递编号" value="@(Model.ExpressNo ?? "")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">快递费用</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" placeholder="请输入快递费用" maxlength="100" name="TrafficFee" id="TrafficFee" value="@(Model.TrafficFee)">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button id="btnSave" class="btn btn-primary" type="button">保存内容</button>
+                                <a class="btn btn-white" href="javascript:history.go(-1);">取消</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/ViewJs/BookOrder/expressEdit.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+}
+
+

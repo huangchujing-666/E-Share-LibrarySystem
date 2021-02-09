@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "数据源列表";
+}
+@model LibrarySystem.Admin.Models.UniversityViewModel
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/University/List" method="get">
+                            <div class="col-sm-3">
+                                学校名称：
+                                <input type="text" name="QueryName" class="form-control inline" style="width:70%;" placeholder="请输入查询学校名称" value="@(Model.QueryName??"")">
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="submit" class="btn btn-info">搜索</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">学校名称</th>
+                                    <th class="text-center">服务器地址</th>
+                                    <th class="text-center">数据库名称</th>
+                                    <th class="text-center">用户id</th>
+                                    <th class="text-center">用户密码</th>
+                                    <th class="text-center">更新时间间隔(分钟)</th>
+                                    <th class="text-center">更新状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.Name</td>
+                                            <td class="text-center">@item.Service</td>
+                                            <td class="text-center">@item.DataBase</td>
+                                            <td class="text-center">@item.UserId</td>
+                                            <td class="text-center">@item.UserPwd</td>
+                                            <td class="text-center">@item.TimeStart</td>
+                                            <td class="text-center">
+                                                @if (item.IsUpdate == (int)LibrarySystem.Domain.EnumHelp.UpdateStartEnum.启用)
+                                                {
+                                                   <label>更新中</label>
+                                                }
+                                                else
+                                                {
+                                                    <label>未启用更新</label>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.Status == 0)
+                                                {
+                                                    <button onclick="enable('/University/UpdateStatus?UniversityId=@item.UniversityId&Status=@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.有效)','/University/List','@item.UniversityId','@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.有效)')" class="btn btn-primary"><i class="fa fa-check padding-right-4"></i>&nbsp;启用</button>
+                                                }
+                                                else
+                                                {
+                                                <a href="/University/Edit?UniversityId=@item.UniversityId" class="btn btn-info"><i class="fa fa-paste padding-right-4"></i>&nbsp;编辑</a>
+                                                <button onclick="disable('/University/UpdateStatus?UniversityId=@item.UniversityId&Status=@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.无效)','/University/List','@item.UniversityId','@((int)LibrarySystem.Domain.EnumHelp.EnabledEnum.无效)')" class="btn btn-warning"><i class="fa fa-warning padding-right-4"></i>&nbsp;禁用</button>
+                                               
+                                                }
+                                                <button onclick="del('/University/Delete','/University/List','@item.UniversityId')" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;删除</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/University/Edit" class="btn btn-info" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;添加</a>
+                                <a href="/University/List" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

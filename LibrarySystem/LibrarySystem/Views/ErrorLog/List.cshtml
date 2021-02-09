@@ -1,0 +1,151 @@
+﻿@{
+    ViewBag.Title = "更新日志列表";
+}
+@model LibrarySystem.Admin.Models.ErrorLogVM
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/ErrorLog/List" method="get">
+                            <div class="col-sm-3">
+                                学校名称：
+                                <select class="form-control inline" style="width:70%;" name="QueryUniversityId">
+                                    <option value="0">请选择学校</option>
+                                    @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                    {
+                                        foreach (var item in Model.UinversityList)
+                                        {
+                                            <option value="@item.UniversityId">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                更新次数：
+                                <input type="number" name="QueryCount" class="form-control inline" style="width:70%;" placeholder="请输入查询更新次数" value="@(Model.QueryCount)">
+                            </div>
+                            <div class="col-sm-3">
+                                日志类型：
+                                <select class="form-control inline" style="width:70%;" name="QueryType">
+                                    <option value="0">请选择日志类型</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.ErrorLogType.更新记录)">@(LibrarySystem.Domain.EnumHelp.ErrorLogType.更新记录.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.ErrorLogType.更新异常记录)">@(LibrarySystem.Domain.EnumHelp.ErrorLogType.更新异常记录.ToString())</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                更新状态：
+                                <select class="form-control inline" style="width:70%;" name="QueryStatus">
+                                    <option value="0">请选择更新状态</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.UpdateStatus.更新中)">@(LibrarySystem.Domain.EnumHelp.UpdateStatus.更新中.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.UpdateStatus.更新成功)">@(LibrarySystem.Domain.EnumHelp.UpdateStatus.更新成功.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.UpdateStatus.更新失败)">@(LibrarySystem.Domain.EnumHelp.UpdateStatus.更新失败.ToString())</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="submit" class="btn btn-info">搜索</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">数据源</th>
+                                    <th class="text-center">更新次数</th>
+                                    <th class="text-center">更新信息</th>
+                                    <th class="text-center">错误类型</th>
+                                    <th class="text-center">错误数据</th>
+                                    <th class="text-center">错误路径</th>
+                                    <th class="text-center">操作人</th>
+                                    <th class="text-center">开始时间</th>
+                                    <th class="text-center">结束时间</th>
+                                    <th class="text-center">状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.University.Name</td>
+                                            <td class="text-center">@item.UpdateCount</td>
+                                            <td class="text-center">@item.ErrorMsg</td>
+                                            <td class="text-center">
+                                                @if (item.Type == (int)LibrarySystem.Domain.EnumHelp.ErrorLogType.更新记录)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.ErrorLogType.更新记录.ToString()
+                                                }
+                                                else if (item.Type == (int)LibrarySystem.Domain.EnumHelp.ErrorLogType.更新异常)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.ErrorLogType.更新异常.ToString()
+                                                }
+                                                else if (item.Type == (int)LibrarySystem.Domain.EnumHelp.ErrorLogType.插入异常)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.ErrorLogType.插入异常.ToString()
+                                                }
+                                                else if (item.Type == (int)LibrarySystem.Domain.EnumHelp.ErrorLogType.获取数据源异常)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.ErrorLogType.获取数据源异常.ToString()
+                                                }
+                                                else if (item.Type == (int)LibrarySystem.Domain.EnumHelp.ErrorLogType.获取更新次数异常)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.ErrorLogType.获取更新次数异常.ToString()
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.ErrorData</td>
+                                            <td class="text-center">@item.ErrorSrc</td>
+                                            @if (item.SysAccount != null && item.SysAccount.SysAccountId > 0)
+                                            {
+                                                if (item.SysAccount.SysRole != null && item.SysAccount.SysRole.SysRoleId > 0)
+                                                {
+                                                    <td class="text-center">
+                                                        <lable>@item.SysAccount.SysRole.Name.ToString()</lable> 
+                                                        <label>:</label>
+                                                        <label>@item.SysAccount.Account</label>
+                                                </td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td class="text-center">
+                                                    管理员
+                                                </td>
+                                            }
+                                            <td class="text-center">@item.StartTime.ToString("yyyy-MM-dd hh:mm:ss fff")</td>
+                                            <td class="text-center">@item.EndTime.ToString("yyyy-MM-dd hh:mm:ss fff")</td>
+                                            <td class="text-center">
+                                                @if (item.Status == (int)LibrarySystem.Domain.EnumHelp.UpdateStatus.更新中)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.UpdateStatus.更新中.ToString()
+                                                }
+                                                else if (item.Status == (int)LibrarySystem.Domain.EnumHelp.UpdateStatus.更新成功)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.UpdateStatus.更新成功.ToString()
+                                                }
+                                                else if (item.Status == (int)LibrarySystem.Domain.EnumHelp.UpdateStatus.更新失败)
+                                                {
+                                                    @LibrarySystem.Domain.EnumHelp.UpdateStatus.更新失败.ToString()
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/ErrorLog/List" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

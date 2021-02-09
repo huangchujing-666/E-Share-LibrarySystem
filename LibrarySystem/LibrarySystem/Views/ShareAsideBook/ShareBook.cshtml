@@ -1,0 +1,105 @@
+﻿@{
+    ViewBag.Title = "图书运书方式";
+}
+@using LibrarySystem.Admin.Common;
+@model LibrarySystem.Admin.Models.ShareAsideBookVM
+@using LibrarySystem.Domain
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        图书运书方式编辑 <small>添加、修改</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal">
+                        <input type="hidden" name="ShareAsideBookId" id="ShareAsideBookId" value="@Model.ShareAsideBookId">
+                        <input type="hidden" name="SysAccountId" id="SysAccountId" value="@Model.SysAccountId">
+                        <input type="hidden" name="ResearchAsideBookId" id="ResearchAsideBookId" value="@Model.ResearchAsideBookId">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电子邮箱</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入电子邮箱" maxlength="100" name="Email" id="Email" value="@(Model.Email??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系方式</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入联系方式" maxlength="100" name="MobilePhone" id="MobilePhone" value="@(Model.MobilePhone??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">运书方式</label>
+                            <div class="col-sm-4">
+                                <select class="form-control inline" style="width:60%;" onchange="selectChange()" name="TrafficType" id="TrafficType">
+                                    <option value="0">请选择运书方式</option>
+                                    @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchTrafficType)))
+                                    {
+                                        string strName = Enum.GetName(typeof(EnumHelp.ResearchTrafficType), myCode);//获取名称
+                                        string strVaule = myCode.ToString();//获取值
+                                        if (Model.TrafficType == int.Parse(strVaule))
+                                        {
+                                            <option value="@strVaule" selected="selected">@strName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@strVaule">@strName</option>
+                                        }
+                                    }
+                                </select>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group traffic-address" style="display:none;">
+                            <label class="col-sm-2 control-label">联系地址</label>
+                            <div class="col-sm-4">
+                                <textarea placeholder="请输入联系地址。如：广州市天河区中山大道西293号 广东技术师范大学 学生宿舍A栋101室" id="Address" name="Address" cols="50" rows="5" style="overflow:hidden">@Model.Address</textarea>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed traffic-address" style="display:none;"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button id="btnSave" class="btn btn-primary" type="button">保存内容</button>
+                                <a class="btn btn-white" href="javascript:history.go(-1);">取消</a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/ViewJs/ShareAsideBook/ShareBookEdit.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script type="text/javascript">
+
+
+            function selectChange()
+            {
+                var TrafficType = $('#TrafficType option:selected');
+                switch (parseInt(TrafficType.val()))
+                {
+                     //自行送至漂流书屋 = 1,
+                     // 等待工作人员上门 = 2
+                    case 1:
+                        $(".traffic-address").css("display", "none");
+                        break;
+                    case 2:
+                        $(".traffic-address").css("display","block");
+                        break;
+                    default:
+                        $(".traffic-address").css("display", "none");
+                }
+            }
+
+           
+    </script>
+}
+

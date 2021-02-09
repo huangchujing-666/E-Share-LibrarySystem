@@ -1,0 +1,163 @@
+﻿
+@{
+    ViewBag.Title = "漂流图书列表";
+}
+@model LibrarySystem.Admin.Models.AsideBookInfoVM
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/AsideBookInfo/BookList" method="get">
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    所在学校：
+                                    <select class="form-control inline" style="width:70%;" name="QueryUId">
+                                        <option value="0">请选择图书所在学校</option>
+                                        @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                        {
+                                            foreach (var item in Model.UinversityList)
+                                            {
+                                                if (Model.QueryUId == item.UniversityId)
+                                                {
+                                                    <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.UniversityId">@item.Name</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    图书类别：
+                                    <input type="text" name="QueryCategory" class="form-control inline" style="width:60%;" placeholder="请输入图书类别" value="@(Model.QueryCategory??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书名称：
+                                    <input type="text" name="QueryName" class="form-control inline" style="width:60%;" placeholder="请输入图书名称" value="@(Model.QueryName??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书ISBN：
+                                    <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                                </div>
+                            </div>
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    <button type="submit" class="btn btn-info">搜索</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">图片</th>
+                                    <th class="text-center">图书所在学校</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书类别</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书作者</th>
+                                    <th class="text-center">可借数量</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                @if (item.BaseImage != null && item.BaseImage.BaseImageId > 0)
+                                                {
+                                                    <img src="@(item.BaseImage.Source + item.BaseImage.Path)" class="kv-preview-thumb kv-file-content file-preview-image" style="width:80px; height:120px;" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="" class="kv-preview-thumb kv-file-content file-preview-image" title="图片不见啦~" style="width:80px; height:120px;" />
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.University.Name</td>
+                                            <td class="text-center">@item.Title</td>
+                                            <td class="text-center">@item.Category</td>
+                                            <td class="text-center">@item.Isbn</td>
+                                            <td class="text-center">@item.Author</td>
+                                            <td class="text-center"><label class="red-line">@item.Available</label></td>
+                                            <td>
+                                                @if (item.Available > 0)
+                                                {
+                                                    if (item.UniversityId == LibrarySystem.Admin.Common.Loginer.UniversityId)//本校图书  直接漂入
+                                                    {
+                                                        <button onclick="orderConfirm('/AsideBookOrder/PreBook','/AsideBookOrder/MyGetAsideBook','@item.AsideBookInfoId','@LibrarySystem.Admin.Common.Loginer.AccountId')" class="btn btn-primary" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;漂入</button>
+                                                    }
+                                                    else//外校图书  填写运输方式
+                                                    {
+                                                        <a href="/AsideBookInfo/PreBook?AsideBookInfoId=@item.AsideBookInfoId&SysAccountId=@LibrarySystem.Admin.Common.Loginer.AccountId" class="btn btn-primary"><i class="fa fa-check padding-right-4"></i>&nbsp;漂入</a>
+                                                    }
+                                                }
+                                                else {
+                                                    <label>此书已共享完，再看看别的书~</label>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/ShareAsideBook/Edit" class="btn btn-info" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;漂出</a>
+                                <a href="/ResearchAsideBook/Edit" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;求书</a>
+                                <a href="/AsideBookInfo/BookList" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script type="text/javascript">
+        //下订单
+        var orderConfirm = function (url, skipUrl, AsideBookInfoId, SysAccountId) {
+            swal({
+                title: "您确定是漂入该图书吗",
+                text: "确定后需要到本校漂流书屋领取图书！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "是的，确定！",
+                cancelButtonText: "让我再考虑一下…",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    window.parent.showModal();
+                    $.post(url, { AsideBookInfoId: AsideBookInfoId, SysAccountId: SysAccountId }, function (data) {
+                        if (data.Status == 200) {
+                            swal("下单成功！", "您已经完成下单服务。", "success");
+                            setTimeout(function () {
+                                //window.location.href = skipUrl;
+                                window.location.href = skipUrl;
+                            }, 1500);
+                        } else {
+                            swal("提示", "下单失败");
+                        }
+                    }).complete(function () { window.parent.hideModal(); });
+                } else {
+                    swal("已取消", "您取消了此次操作！", "error");
+                }
+            });
+        };
+    </script>
+}

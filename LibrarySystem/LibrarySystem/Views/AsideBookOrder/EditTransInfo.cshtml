@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "订单信息编辑";
+}
+@using LibrarySystem.Domain;
+@model LibrarySystem.Admin.Models.AsideBookOrderVM
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        订单信息编辑 <small>添加、修改</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <form id="from" class="form-horizontal">
+                        <input type="hidden" class="form-control" name="SysAccountId" id="SysAccountId" value="@Model.SysAccountId">
+                        <input type="hidden" class="form-control" name="AsideBookOrderId" id="AsideBookOrderId" value="@Model.AsideBookOrderId">
+                        <input type="hidden" class="form-control" name="TrafficAccountId" id="TrafficAccountId" value="@Model.TrafficAccountId" />
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收书人</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="Account" id="Account" readonly="readonly" class="form-control" placeholder="请输入收书人" value="@(Model.Account ?? "")">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电子邮箱</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入电子邮箱" maxlength="100" name="Email" id="Email" value="@(Model.Email??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系方式</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入联系方式" maxlength="100" name="MobilePhone" id="MobilePhone" value="@(Model.MobilePhone??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">运书方式</label>
+                            <div class="col-sm-4">
+                                @if (Model.SysAccountId > 0 && Model.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为收书人
+                                {
+                                    <select class="form-control inline" style="width:60%;" onchange="selectChange()" name="TrafficType" id="TrafficType">
+                                        <option value="0">请选择运书方式</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.TrafficType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.TrafficType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.TrafficType == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                }
+                                else if (Model.TrafficAccountId > 0 && Model.TrafficAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为运输人
+                                {
+                                    <select class="form-control inline" style="width:60%;" disabled="disabled" name="TrafficType" id="TrafficType">
+                                        <option value="0">请选择运书方式</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.TrafficType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.TrafficType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.TrafficType == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                }
+
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group traffic-address">
+                            <label class="col-sm-2 control-label">补偿金额</label>
+                            <div class="col-sm-4">
+                                @if (Model.SysAccountId > 0 && Model.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为收书人
+                                {
+                                    <input type="number" class="form-control" placeholder="请输入补偿金额" maxlength="100" name="TrafficFee" id="TrafficFee" value="@(Model.TrafficFee)">
+                                }
+                                else if (Model.TrafficAccountId > 0 && Model.TrafficAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为运输人
+                                {
+                                    <input type="number" class="form-control" placeholder="请输入补偿金额" readonly="readonly" maxlength="100" name="TrafficFee" id="TrafficFee" value="@(Model.TrafficFee)">
+                                }
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed traffic-address"></div>
+                        <div class="form-group traffic-address">
+                            <label class="col-sm-2 control-label">收书人联系地址</label>
+                            <div class="col-sm-4">
+                                @if (Model.SysAccountId > 0 && Model.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为收书人
+                                {
+                                    <textarea placeholder="" id="Address" name="Address" cols="50" rows="5" style="overflow:hidden">@Model.Address</textarea>
+                                }
+                                else if (Model.TrafficAccountId > 0 && Model.TrafficAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为运输人
+                                {
+                                    <textarea placeholder="" readonly="readonly" id="Address" name="Address" cols="50" rows="5" style="overflow:hidden">@Model.Address</textarea>
+                                }
+
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed traffic-address"></div>
+                        @if (Model.SysAccountId > 0 && Model.SysAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为收书人
+                        {
+
+                        }
+                        else if (Model.TrafficAccountId > 0 && Model.TrafficAccountId == LibrarySystem.Admin.Common.Loginer.AccountId)//操作人为运输人
+                        {
+                            <div class="form-group senderinfo">
+                                <label class="col-sm-2 control-label">运书人联系地址</label>
+                                <div class="col-sm-4">
+                                    <textarea placeholder="请输入联系地址。如：广州市天河区中山大道西293号 广东技术师范大学 学生宿舍A栋101室" id="SenderAddress" name="SenderAddress" cols="50" rows="5" style="overflow:hidden">@Model.SenderAddress</textarea>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed senderinfo"></div>
+                        }
+
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button id="btnSave" class="btn btn-primary" type="button">保存内容</button>
+                                <a class="btn btn-white" href="javascript:history.go(-1);">取消</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/ViewJs/AsideBookOrder/EditTransInfo.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+
+    <script type="text/javascript">
+        function selectChange() {
+            var TrafficType = $('#TrafficType option:selected');
+            switch (parseInt(TrafficType.val())) {
+                //自取 = 1,
+                //邮寄 = 2,
+                //顺路送书 = 3
+                case 1:
+                    $(".traffic-address").css("display", "none");
+                    break;
+                case 2:
+                    $(".traffic-address").css("display", "block");
+                    break;
+                default:
+                    $(".traffic-address").css("display", "block");
+            }
+        }
+       
+    </script>
+}
+
+

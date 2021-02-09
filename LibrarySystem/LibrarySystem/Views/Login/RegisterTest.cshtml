@@ -1,0 +1,94 @@
+﻿
+@{
+    Layout = null;
+}
+@model LibrarySystem.Admin.Models.RegisterVM
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>E建共享图书服务系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="">
+    <meta name="description" content="E建共享图书服务系统">
+    <link href="/Content/bootstrap.min.css?v=1.0.1" rel="stylesheet" />
+
+    <link href="/Content/font-awesome.min.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/animate.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/style.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/plugins/sweetalert/sweetalert.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/registernew.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="mainContent" style="">
+        <div class="indexTitle">
+            <p>E建共享</p>
+            <p>图书服务系统</p>
+        </div>
+        <div class="fromBg">
+            <h2>注册新用户</h2>
+            <form class="form-horizontal indexForm">
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <select class="form-control"  name="UniversityId" id="UniversityId" value="">
+                            <option value="0">请选择学校</option>
+                            @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                            {
+                                foreach (var item in Model.UinversityList)
+                                {
+                                    <option value="@item.UniversityId">@item.Name</option>
+                                }
+                            }
+                        </select>
+                        <span class="glyphicon glyphicon-home form-control-feedback" aria-hidden="true"></span>
+
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入账户(学号)" type="user" class="form-control"  id="Account" name="Account"  aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入密码" type="password" class="form-control"  id="PassWord" name="PassWord" aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-lock form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="col-sm-12">
+                        <input placeholder="请输入手机号" type="user" class="form-control" id="MobilePhone" name="MobilePhone" aria-describedby="inputSuccess3Status">
+                        <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+
+                    </div>
+                </div>
+                <div class="form-group has-feedback groupLast">
+                    <div class="col-sm-12">
+                        <button class="btn btn-primary btn-block active"  id="btnRegister">注册</button>
+                    </div>
+                </div>
+                <div class="form-group has-feedback groupLast">
+                    <div class="col-sm-12">
+                        <a href="/Login/Login">返回登录</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="copyright">
+            <p>©2019 All Rights Reserved. E建共享团队</p>
+        </div>
+    </div>
+    <section class="hc-banner">
+        <ul class="banner">
+            <li class="hc-bannerbg" style="background-image:url('../../images/register.jpg');">
+        </ul>
+    </section>
+    <!-- 全局js -->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="/Scripts/plugins/sweetalert/sweetalert.min.js?v=1.0.1"></script>
+    <script src="@("/Scripts/ViewJs/Login/Register.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+</body>
+</html>

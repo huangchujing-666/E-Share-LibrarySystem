@@ -1,0 +1,153 @@
+﻿@{
+    Layout = null;
+}
+@model LibrarySystem.Admin.Models.RegisterVM
+@using LibrarySystem.Domain;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>E建漂流图书服务系统</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta charset="utf-8" />
+    <link href="/Content/bootstrap.min.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/loginnew.css" rel="stylesheet" />
+    <link href="/Content/font-awesome.min.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/animate.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/style.css?v=1.0.1" rel="stylesheet" />
+    <link href="/Content/plugins/sweetalert/sweetalert.css?v=1.0.1" rel="stylesheet" />
+    <script src="/Scripts/jquery-1.10.2.min.js"></script>
+</head>
+<body class="signin">
+    <div class="mainContent" style="">
+        <div class="indexTitle">
+            <p>E建漂流</p>
+            <p>图书服务系统</p>
+        </div>
+        <div class="indexList">
+            <p><span>享</span>漂流共享，制造共赢</p>
+            <p><span>读</span>给你不e样的阅读之旅</p>
+            <p><span>思</span>给你不e样的思想盛宴</p>
+        </div>
+        <div class="welcome">
+            <h3>欢迎使用</h3>
+            <h4>E建漂流图书服务系统</h4>
+            @*<p style="text-indent:2em;">
+                E漂流图书服务系统是基于区域内各个高校图书馆管理
+                系统为背景，通过数据库融合技术将他们建立起联系，实现
+                各个高校图书馆资源的共享，可以解决目前高校图书馆存在
+                的信息资源孤岛问题，可以有效防止了图书馆信息资源的重
+                复建设。高校图书馆资源共享服务系统提供了美观、人性的
+                界面，不仅提供了普通图书馆管理系统所有的功能需求，还
+                将数据资源同步管理集成在一个按钮，简单配置即可实现一
+                建同步，使用非常便捷。
+            </p>*@
+            <p style="text-indent:2em;">
+                E漂流图书服务系统是以区域内各个高校图书馆图书、
+                学生手中闲置图书资源为基础，通过数据融合技术建立起联
+                系，实现各个高校图书馆资源的共享互借、学生闲置图书校
+                际漂流共享，可以解决目前高校图书馆存在图书资源孤岛问
+                题，有效防止图书馆资源的重复建设。此平台提供了美观、
+                流畅的界面，不仅满足用户的普通图书馆管理系统功能需求
+                ，还能一键漂流闲置图书，并将数据资源同步管理集成在一
+                个按钮，简单配置即可实现一键同步，使用非常便捷。
+            </p>
+        </div>
+        <form class="form-horizontal indexForm">
+            <div class="form-group has-feedback">
+                <h2>登录</h2>
+                <div class="col-sm-12">
+                    <select class="form-control" id="RoleId" name="RoleId">
+                        <option value="0">请选择角色</option>
+                        <option value="@((int)EnumHelp.RoleTypeEnum.学生)">学生/教师</option>
+                        <option value="@((int)EnumHelp.RoleTypeEnum.管理员)">高校管理员</option>
+                        @*<option value="@((int)EnumHelp.RoleTypeEnum.系统管理员)">系统管理员</option>*@
+                    </select>
+                    <span class="glyphicon glyphicon-star form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback" id="universityBox">
+                <div class="col-sm-12">
+                    <select class="form-control" name="UniversityId" id="UniversityId">
+                        <option value="0">请选择学校</option>
+                        @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                        {
+                            foreach (var item in Model.UinversityList)
+                            {
+                                <option value="@item.UniversityId">@item.Name</option>
+                            }
+                        }
+                    </select>
+                    <span class="universityIcon glyphicon glyphicon-home form-control-feedback" id="logo" aria-hidden="true"></span>
+
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <div class="col-sm-12">
+                    <input placeholder="用户" type="user" class="form-control" id="account" name="account" aria-describedby="inputSuccess3Status">
+                    <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <div class="col-sm-12">
+                    <input placeholder="密码" type="password" class="form-control" id="password" name="password" aria-describedby="inputSuccess3Status">
+                    <span class="glyphicon glyphicon-folder-close form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback groupLast">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-primary btn-block active" id="btnLogin">登陆</button>
+                </div>
+            </div>
+            <a href="/Login/Register" style="display:block;float:left;width:70%;">没有账号？马上注册</a>
+            <a href="/Login/ResetPassword"  style="display:block;float:right;width:30%; text-align:right;">忘记密码</a>
+        </form>
+        <div class="copyright">
+            <p>©2020 All Rights Reserved. E建漂流公司</p>
+        </div>
+    </div>
+    <section class="hc-banner">
+        <ul class="banner">
+            <li class="hc-bannerbg" style="background-image: url('../../images/banner1.png'); ">
+            </li>
+            <li class="hc-bannerbg" style="background-image: url('../../images/banner2.png');">
+            </li>
+            <li class="hc-bannerbg" style="background-image: url('../../images/banner3.png');"></li>
+        </ul>
+    </section>
+    <div class="bowen">
+        <div class="bowenBg" style="background-image: url('../../images/bowen2.png');"></div>
+    </div>
+    <!-- 全局js -->
+    <script src="/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="/Scripts/plugins/sweetalert/sweetalert.min.js?v=1.0.1"></script>
+    <script src="/Scripts/ViewJs/Login/login.js?v=1.0.1"></script>
+    <script src="/Scripts/login.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#RoleId").change(function () {
+                var uid = document.getElementById("UniversityId");
+                var rolid = $('#RoleId option:selected');
+                if (rolid.val() == '@((int)EnumHelp.RoleTypeEnum.系统管理员)') {
+                   // alert($(this).val());
+                    // $("#UniversityId").show();
+                    //uid.style.display = "none";
+                    //$("#UniversityId .universityIcon").hide();
+                    $("#universityBox").hide();
+                    //uid.setAttribute(className, "hidden");
+                } else {
+                   // alert($(this).val());
+                   // uid.style.display = "block";
+                   // $("#UniversityId .universityIcon").show();
+                    $("#universityBox").show();
+                    //uid.setAttribute(className, "show");
+                    //$("#UniversityId").hide();
+                }
+            });
+        })
+    </script>
+</body>
+</html>

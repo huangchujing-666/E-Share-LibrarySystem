@@ -1,0 +1,247 @@
+﻿
+@{
+    ViewBag.Title = "漂流图书订单列表";
+}
+@model LibrarySystem.Admin.Models.AsideBookOrderVM
+@using LibrarySystem.Domain;
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/AsideBookOrder/List" method="get">
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    漂书人：
+                                    <input type="text" name="QuerySysAccount" class="form-control inline" style="width:60%;" placeholder="请输入求书人账户" value="@(Model.QuerySysAccount??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    运输方式：
+                                    <select class="form-control inline" style="width:60%;" name="QueryTrafType">
+                                        <option value="0">请选择运输类型</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.TrafficType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.TrafficType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryTrafType == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    订单状态：
+                                    <select class="form-control inline" style="width:60%;" name="QueryOrderStatus">
+                                        <option value="0">请选择订单状态</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.BookOrderStatus)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.BookOrderStatus), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryOrderStatus == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    用户所在学校：
+                                    <select class="form-control inline" style="width:60%;" name="QueryUId">
+                                        <option value="0">请选择学校</option>
+                                        @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                        {
+                                            foreach (var item in Model.UinversityList)
+                                            {
+                                                if (Model.QueryUId == item.UniversityId)
+                                                {
+                                                    <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.UniversityId">@item.Name</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    图书类别：
+                                    <input type="text" name="QueryCategory" class="form-control inline" style="width:60%;" placeholder="请输入图书类别" value="@(Model.QueryCategory??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书名称：
+                                    <input type="text" name="QueryName" class="form-control inline" style="width:60%;" placeholder="请输入图书名称" value="@(Model.QueryName??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书ISBN：
+                                    <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    <button type="submit" class="btn btn-info">搜索</button>
+                                    <a href="https://www.kuaidi100.com/" target="_blank" style="text-decoration:none;"><button type="button" class="btn btn-info" style="float:right">快递查询</button></a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">图书图片</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书类别</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书所在学校</th>
+                                    <th class="text-center">下单账户</th>
+                                    <th class="text-center">下单人所在学校</th>
+                                    <th class="text-center">库存数量</th>
+                                    <th class="text-center">运书方式</th>
+                                    <th class="text-center">订单状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                @if (item.AsideBookInfo.BaseImage != null && item.AsideBookInfo.BaseImage.BaseImageId > 0)
+                                                {
+                                                    <img src="@(item.AsideBookInfo.BaseImage.Source + item.AsideBookInfo.BaseImage.Path)" class="kv-preview-thumb kv-file-content file-preview-image" style="width:80px; height:120px;" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="" class="kv-preview-thumb kv-file-content file-preview-image" title="图片不见啦~" style="width:80px; height:120px;" />
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.AsideBookInfo.Title</td>
+                                            <td class="text-center">@item.AsideBookInfo.Category</td>
+                                            <td class="text-center">@item.AsideBookInfo.Isbn</td>
+                                            <td class="text-center">@item.AsideBookInfo.University.Name</td>
+                                            <td class="text-center">@item.SysAccount.Account</td>
+                                            <td class="text-center">@item.SysAccount.University.Name</td>
+                                            <td class="text-center">@item.AsideBookInfo.Available</td>
+                                            <td class="text-center">
+                                                @if (item.OrderStatus != -1)
+                                                {
+                                                    string strName = Enum.GetName(typeof(EnumHelp.TrafficType), item.TrafficType);
+                                                    <label>@strName</label>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.OrderStatus != -1)
+                                                {
+                                                    string strName = Enum.GetName(typeof(EnumHelp.BookOrderStatus), item.OrderStatus);
+                                                    <label class="red-line">@strName</label>
+                                                    if (item.TrafficType == (int)EnumHelp.TrafficType.邮寄)
+                                                    {
+                                                        if (item.ExpressId > 0)
+                                                        {
+                                                            <label class="red-line">快递：</label>
+                                                            <label class="red-line">@item.Express.ExpressName</label><br />
+                                                            <label class="red-line">运单号：</label>
+                                                            <label class="red-line">@item.Express.ExpressNo</label><br />
+                                                            <label class="red-line">费用：</label>
+                                                            <label class="red-line">@item.Express.TrafficFee</label>
+                                                        }
+                                                    }
+                                                    else if (item.TrafficType == (int)EnumHelp.TrafficType.顺路送书)
+                                                    {
+                                                        if (item.TrafficAccountId > 0)
+                                                        {
+                                                            <label class="red-line">运输人信息:</label>
+                                                            <label class="red-line">@item.SenderInfo</label>
+                                                        }
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (LibrarySystem.Admin.Common.Loginer.UniversityId == item.AsideBookInfo.UniversityId)//管理本校图书
+                                                {
+                                                    if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.待自取)
+                                                    {
+                                                        //确认已被本人取走
+                                                        <button onclick="orderConfirm('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/List','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已完结)')" class="btn btn-primary" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;用户已收到书</button>
+                                                        <button onclick="orderCalcle('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/List','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已取消)')" class="btn btn-danger" data-refresh="0"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.运输中)
+                                                    {
+                                                        if (item.TrafficType == (int)EnumHelp.TrafficType.邮寄 && item.ExpressId > 0)
+                                                        {
+                                                            <a href="/AsideBookOrder/BookEmail?AsideBookOrderId=@item.AsideBookOrderId" class="btn btn-info"><i class="fa fa-paste padding-right-4"></i>&nbsp;编辑邮寄信息</a>
+                                                        }
+                                                        //确认已被本人取走
+                                                        <button onclick="orderConfirm('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/List','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已完结)')" class="btn btn-primary" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;用户已收到书</button>
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.待邮寄)
+                                                    {
+                                                        //邮寄界面
+                                                        <a href="/AsideBookOrder/BookEmail?AsideBookOrderId=@item.AsideBookOrderId&OrderStatus=@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.运输中)" class="btn btn-info" data-refresh="0"><i class="fa fa-paste padding-right-4"></i>&nbsp;已邮寄</a>
+                                                        <button onclick="orderCalcle('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/List','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已取消)')" class="btn btn-danger" data-refresh="0"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.待顺风送)
+                                                    {
+                                                        if (item.TrafficAccountId > 0)
+                                                        {
+                                                            //确认已被接送人取走
+                                                            <button onclick="orderConfirm('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/List','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.运输中)')" class="btn btn-primary" data-refresh="0"><i class="fa fa-check padding-right-4"></i>&nbsp;接送人已取走</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>等待用户接送</label>
+                                                        }
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.已完结)
+                                                    {
+                                                        <label>此订单已完结</label>
+                                                    }
+                                                    else if (item.OrderStatus == (int)EnumHelp.BookOrderStatus.已取消)
+                                                    {
+                                                        <label>此订单已取消</label>
+                                                    }
+                                                    @*<button onclick="orderCalcle('/AsideBookOrder/UpdateOrderStatus','/AsideBookOrder/List','@item.AsideBookOrderId','@((int)LibrarySystem.Domain.EnumHelp.BookOrderStatus.已取消)')" class="btn btn-danger" data-refresh="0"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>*@
+                                                }
+                                                else
+                                                {
+                                                    <label>非此书学校管理员无法进行操作，敬请谅解！</label>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                @*<a href="/AsideBookOrder/Edit" class="btn btn-info" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;添加</a>*@
+                                <a href="/AsideBookOrder/List" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/ViewJs/AsideBookOrder/AsideBookOrderList.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+}
+

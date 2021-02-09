@@ -1,0 +1,137 @@
+﻿@{
+    ViewBag.Title = "图书共享方式";
+}
+@using LibrarySystem.Admin.Common;
+@model LibrarySystem.Admin.Models.ResearchAsideBookVM
+@using LibrarySystem.Domain
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        图书共享方式编辑 <small>添加、修改</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal">
+                        <input type="hidden" name="ResearchAsideBookId" id="ResearchAsideBookId" value="@Model.ResearchAsideBookId">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">共享人所在学校</label>
+                            <div class="col-sm-4">
+                                    <select class="form-control inline" disabled="disabled" style="width:150px;" name="UniversityId" id="UniversityId">
+                                        <option value="0">请选择所在学校</option>
+                                        <option value="@Model.UniversityId" selected="selected">@Model.UniversityName</option>
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图书运输方式</label>
+                            <div class="col-sm-4">
+                                <select class="form-control inline" style="width:60%;" onchange="selectChange()" name="TrafficType" id="TrafficType">
+                                    <option value="0">请选择运输方式</option>
+                                    @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchTrafficType)))
+                                    {
+                                        string strName = Enum.GetName(typeof(EnumHelp.ResearchTrafficType), myCode);//获取名称
+                                        string strVaule = myCode.ToString();//获取值
+                                        if (Model.TrafficType == int.Parse(strVaule))
+                                        {
+                                            <option value="@strVaule" selected="selected">@strName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@strVaule">@strName</option>
+                                        }
+                                    }
+                                </select>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group traffic-address" style="display:none;">
+                            <label class="col-sm-2 control-label">联系方式与地址</label>
+                            <div class="col-sm-4">
+                                <textarea placeholder="请输入正确的联系方式、地址、及取书时间。如：13866666666，学生宿舍A栋101，早上：8：00-12:00" id="ShareCustomerInfo" name="ShareCustomerInfo" cols="50" rows="5" style="overflow:hidden" value="@(Model.ShareCustomerInfo??"")"></textarea>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed traffic-address" style="display:none;"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button id="btnSave" class="btn btn-primary" type="button">保存内容</button>
+                                <a class="btn btn-white" href="javascript:history.go(-1);">取消</a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script type="text/javascript">
+            function selectChange()
+            {
+                var TrafficType = $('#TrafficType option:selected');
+                switch (parseInt(TrafficType.val()))
+                {
+                    case 1://EnumHelp.ResearchTrafficType.自行送至漂流书屋
+                        $(".traffic-address").css("display", "none");
+                        break;
+                    case 2://EnumHelp.TrafficType.工作人员上门收取
+                        $(".traffic-address").css("display","block");
+                        break;
+                    default:
+                        //trafficType.style.display=none;
+                        $(".traffic-select").css("display","none");
+                }
+            }
+
+            $(function () {
+                $('#btnSave').click(function () {
+                    //获取对象元素
+                    var ResearchAsideBookId = $('#ResearchAsideBookId'),
+                    TrafficType = $('#TrafficType option:selected'),
+                    CustomerInfo = $('#CustomerInfo');
+                    //校验
+                    if (TrafficType.val() == 0) {
+                        swal("提示", "请选择正确的图书运输方式");
+                        TrafficType.focus();
+                        return false;
+                    }
+                    else if(parseInt(TrafficType.val())==2)
+                    {
+                        if (CustomerInfo.val() == null || CustomerInfo.val() == '') {
+                            swal("提示", "请输入正确的联系方式、地址、及取书时间");
+                            CustomerInfo.focus();
+                            return false;
+                        }
+                    }
+                    var dataArr = {
+                        ResearchAsideBookId: ResearchAsideBookId.val(),
+                        TrafficType: TrafficType.val(),
+                        CustomerInfo: CustomerInfo.val()
+                    };
+                    window.parent.showModal();
+                    //提交
+                    $.post('/ResearchAsideBook/OrderResearchAsideBook', dataArr, function (data) {
+                        if (data.Status == 200) {
+                            swal("提示", "操作成功");
+                            setTimeout(function () {
+                                window.location.href = '/AsideBookInfo/MyAsideBook';
+                            }, 1500);
+                        }
+                        if (data.Status == 202) {
+                            swal("提示", "操作失败");
+                        }
+                        if (data.Status == 203) {
+                            swal("提示", "数据重复");
+                        }
+                    }).complete(function () { window.parent.hideModal(); });
+                });
+            });
+    </script>
+}
+

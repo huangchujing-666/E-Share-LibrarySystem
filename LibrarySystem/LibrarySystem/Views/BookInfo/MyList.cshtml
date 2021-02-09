@@ -1,0 +1,249 @@
+﻿@{
+    ViewBag.Title = "图书列表";
+}
+@model LibrarySystem.Admin.Models.BookInfoVM
+@using LibrarySystem.Domain
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+
+                    <form action="/BookInfo/MyList" method="get">
+                        <div class="row" style="padding:10px 10px;">
+                            <div class="col-sm-3">
+                                学校名称：
+                                <select class="form-control inline" style="width:70%;" name="QueryUId">
+                                    <option value="0">请选择学校</option>
+                                    @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                    {
+                                        foreach (var item in Model.UinversityList)
+                                        {
+                                            if (item.UniversityId == Model.QueryUId)
+                                            {
+                                                <option selected="selected" value="@item.UniversityId">@item.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.UniversityId">@item.Name</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                图书类别：
+                                <input type="text" name="QueryCategory" class="form-control inline" style="width:60%;" placeholder="请输入图书类别" value="@(Model.QueryCategory??"")">
+                            </div>
+                            <div class="col-sm-3">
+                                图书名称：
+                                <input type="text" name="QueryName" class="form-control inline" style="width:60%;" placeholder="请输入图书名称" value="@(Model.QueryName??"")">
+                            </div>
+                            <div class="col-sm-3">
+                                图书ISBN：
+                                <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                            </div>
+
+                        </div>
+                        <div class="row" style="padding:10px 10px;">
+                            <div class="col-sm-3">
+                                借书状态：
+                                <select class="form-control inline" style="width:70%;" name="QueryBorrowStatus" id="QueryBorrowStatus">
+                                    <option value="0">请选择借书状态</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.审核中)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.审核中.ToString())</option>
+                                    @*<option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.审核通过)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.审核通过.ToString())</option>*@
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.借书中)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.借书中.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.续借)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.续借.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.已还书)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.已还书.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.库存不足)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.库存不足.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.逾期欠费)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.逾期欠费.ToString())</option>
+                                    <option value="@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.取消)">@(LibrarySystem.Domain.EnumHelp.BorrowStatus.取消.ToString())</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="submit" class="btn btn-info">搜索</button>
+                                <a href="https://www.kuaidi100.com/" target="_blank" style="text-decoration:none;"><button type="button" class="btn btn-info" style="float:right">快递查询</button></a>
+                            </div>
+                            <div class="col-sm-5">
+                                <lable>每人可借书</lable>
+                                <lable style="font-size:18px">@LibrarySystem.Common.CommonPara.MAX_BORROW_COUNT</lable>
+                                <lable>本，您已经借书</lable>
+                                <label style="font-size:18px">@Model.BorrowCount</label>
+                                <lable>本，您还可以借书</lable>
+                                <label style="font-size:18px">@Model.AvaliableCount</label>
+                                <lable>本。</lable>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">所属学校</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书类别</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书作者</th>
+                                    <th class="text-center">库存数量</th>
+                                    <th class="text-center">已借数量</th>
+                                    <th class="text-center">运书方式</th>
+                                    <th class="text-center">借书状态</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.UserPaging != null && Model.UserPaging.Count > 0)
+                                {
+                                    foreach (var item in Model.UserPaging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.UniversityName</td>
+                                            <td class="text-center">@item.Title</td>
+                                            <td class="text-center">@item.Category</td>
+                                            <td class="text-center">@item.Isbn</td>
+                                            <td class="text-center">@item.Author</td>
+                                            <td class="text-center">@item.Available</td>
+                                            <td class="text-center">@item.Count</td>
+                                            <td class="text-center">
+                                                @if (item.TrafficType == (int)EnumHelp.TrafficType.自取)
+                                                {
+                                                    <label>自取</label>
+                                                }
+                                                else if (item.TrafficType == (int)EnumHelp.TrafficType.邮寄)
+                                                {
+                                                    <label>邮寄</label><br />
+                                                    if (item.ExpressId > 0)
+                                                    {
+                                                        <label>快递名称：</label>
+                                                        <label>@item.ExpressName</label><br />
+                                                        <label>快递编号：</label>
+                                                        <label>@item.ExpressNo</label><br />
+                                                        <label>快递费用：</label>
+                                                        <label>@item.TrafficFee</label>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="text-center" style="color:#ff0000">
+                                                @if (item.ExpressId > 0 && item.IsReceived == (int)EnumHelp.IsReceived.未收到)
+                                                {
+                                                    <label>审核通过，图书邮寄中</label><br />
+                                                        <label>快递名称：</label>
+                                                        <label>@item.ExpressName</label><br />
+                                                        <label>快递编号：</label>
+                                                        <label>@item.ExpressNo</label>
+                                                }
+                                                else
+                                                {
+                                                    @item.BorrowStatus
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.UniversityId != item.AccountUniversityId && item.BookStatus == (int)EnumHelp.BorrowStatus.审核中)//图书与借书人不同校  可以修改运书方式
+                                                {
+                                                    <a href="/BookInfo/PreBook?BookInfoId=@item.BookInfoId&SysAccountId=@LibrarySystem.Admin.Common.Loginer.AccountId&BookOrderId=@item.BookOrderId" class="btn btn-primary"><i class="fa fa-paste padding-right-4"></i>&nbsp;修改运书信息</a>
+                                                    //修改运书地址与方式
+                                                   // <a href="/SysAccount/StudentEdit?BookOrderId=@item.BookOrderId" class="btn btn-info" data-refresh="0"><i class="fa fa-paste padding-right-4"></i>&nbsp;修改邮寄信息</a>
+                                                }
+                                                @if ((((item.ExpressId <= 0 && item.TrafficType == (int)EnumHelp.TrafficType.邮寄) && item.BookStatus != (int)EnumHelp.BorrowStatus.取消) || item.TrafficType == (int)EnumHelp.TrafficType.自取) && item.BookStatus == (int)EnumHelp.BorrowStatus.审核中)
+                                                {
+                                                    //自取  或者未邮寄 可以取消订单
+                                                    <button onclick="cancleBorrow('/BookOrder/BorrowUpdate','/BookOrder/MyList',@item.BookOrderId,@((int)LibrarySystem.Domain.EnumHelp.BorrowStatus.取消))" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>
+                                                }
+                                                else if ( (item.TrafficType == (int)EnumHelp.TrafficType.邮寄 && item.ExpressId > 0 && item.BookStatus == (int)EnumHelp.BorrowStatus.审核通过 && item.IsReceived == (int)EnumHelp.IsReceived.未收到) ||(item.TrafficType == (int)EnumHelp.TrafficType.自取 && item.BookStatus == (int)EnumHelp.BorrowStatus.审核通过 && item.IsReceived == (int)EnumHelp.IsReceived.未收到))
+                                                {
+                                                    //审核通过且 已经邮寄
+                                                    //收到图书按钮
+                                                    <button onclick="confirmReceived('/BookOrder/ReceivedUpdate','/BookOrder/MyList',@item.BookOrderId,@((int)LibrarySystem.Domain.EnumHelp.IsReceived.已收到))" class="btn btn-primary"><i class="fa fa-check padding-right-4"></i>&nbsp;收到图书</button>
+                                                }
+                                                else
+                                                {
+                                                    <label>-</label>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/BookInfo/MyList" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.UserPaging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+
+    <script type="text/javascript">
+        var cancleBorrow = function (url, skipUrl, BookOrderId, BorrowStatus) {
+            swal({
+                title: "您确定取消预借吗",
+                text: "确认将取消预借，请谨慎操作！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "是的，我确认取消预借！",
+                cancelButtonText: "让我再考虑一下…",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    window.parent.showModal();
+                    $.post(url, { BookOrderId: BookOrderId, BorrowStatus: BorrowStatus }, function (data) {
+                        if (data.Status == 200) {
+                            swal("已取消申请！", "您已经确取消预借。", "success");
+                            setTimeout(function () {
+                                //window.location.href = skipUrl;
+                                window.location.href = location.href;
+                            }, 1500);
+                        } else {
+                            swal("提示", "取消失败");
+                        }
+                    }).complete(function () { window.parent.hideModal(); });
+                } else {
+                    swal("已取消", "您取消了此次操作！", "error");
+                }
+            });
+        };
+
+        var confirmReceived = function (url, skipUrl, BookOrderId, IsReceived) {
+            swal({
+                title: "您确定收到图书了吗",
+                text: "确认将无法修改，请谨慎操作！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "是的，我确认收到图书！",
+                cancelButtonText: "让我再考虑一下…",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    window.parent.showModal();
+                    $.post(url, { BookOrderId: BookOrderId, IsReceived: IsReceived }, function (data) {
+                        if (data.Status == 200) {
+                            swal("已进行确认！", "您已经确认收到图书。", "success");
+                            setTimeout(function () {
+                                //window.location.href = skipUrl;
+                                window.location.href = location.href;
+                            }, 1500);
+                        } else {
+                            swal("提示", "确认失败");
+                        }
+                    }).complete(function () { window.parent.hideModal(); });
+                } else {
+                    swal("已取消", "您取消了此次操作！", "error");
+                }
+            });
+        };
+
+    </script>
+}

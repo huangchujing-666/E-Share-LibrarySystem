@@ -1,0 +1,203 @@
+﻿
+@{
+    ViewBag.Title = "共享图书列表";
+}
+@model LibrarySystem.Admin.Models.ShareAsideBookVM
+@using LibrarySystem.Domain;
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row" style="padding:10px 10px;">
+                        <form action="/ShareAsideBook/MyShareList" method="get">
+                            <div class="row" style="padding:10px 10px;">               
+                                <div class="col-sm-3">
+                                    图书类别：
+                                    <input type="text" name="QueryCategory" class="form-control inline" style="width:60%;" placeholder="请输入图书类别" value="@(Model.QueryCategory??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书名称：
+                                    <input type="text" name="QueryName" class="form-control inline" style="width:60%;" placeholder="请输入图书名称" value="@(Model.QueryName??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    图书ISBN：
+                                    <input type="text" name="QueryIsbn" class="form-control inline" style="width:60%;" placeholder="请输入图书ISBN" value="@(Model.QueryIsbn??"")">
+                                </div>
+                                <div class="col-sm-3">
+                                    共享方式：
+                                    <select class="form-control inline" style="width:60%;" name="QueryPayType" id="QueryPayType">
+                                        <option value="0">请选择共享方式</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchPayType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.ResearchPayType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryPayType == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row" style="padding:10px 10px;">
+                                <div class="col-sm-3">
+                                    运书方式：
+                                    <select class="form-control inline" style="width:60%;" name="QueryTrafficType" id="QueryTrafficType">
+                                        <option value="0">请选择运书方式</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.ResearchTrafficType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.ResearchTrafficType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryTrafficType == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    图书状态：
+                                    <select class="form-control inline" style="width:60%;" name="QueryShareStatus" id="QueryShareStatus">
+                                        <option value="0">请选择图书状态</option>
+                                        @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.BookShareStatus)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.BookShareStatus), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryShareStatus == int.Parse(strVaule))
+                                            {
+                                                <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button type="submit" class="btn btn-info">搜索</button>
+                                    <a href="https://www.kuaidi100.com/" target="_blank" style="text-decoration:none;"><button type="button" class="btn btn-info" style="float:right">快递查询</button></a>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <lable>感谢您在漂流平台共享图书</lable>
+                                    <label style="font-size:18px">@Model.ShareCount</label>
+                                    <lable>本。</lable>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">图片</th>
+                                    <th class="text-center">图书名称</th>
+                                    <th class="text-center">图书ISBN</th>
+                                    <th class="text-center">图书数量</th>
+                                    <th class="text-center">图书状态</th>
+                                    <th class="text-center">共享人</th>
+                                    <th class="text-center">共享方式</th>
+                                    <th class="text-center">运书方式</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Paging.Items != null && Model.Paging.Items.Count > 0)
+                                {
+                                    foreach (var item in Model.Paging.Items)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                @if (item.BaseImage != null && item.BaseImage.BaseImageId > 0)
+                                                {
+                                                    <img src="@(item.BaseImage.Source + item.BaseImage.Path)" class="kv-preview-thumb kv-file-content file-preview-image" style="width:80px; height:120px;" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="" class="kv-preview-thumb kv-file-content file-preview-image" title="图片不见啦~" style="width:80px; height:120px;" />
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.Title</td>
+                                            <td class="text-center">@item.Isbn</td>
+                                            <td class="text-center">@item.Count</td>
+                                            <td class="text-center">
+                                                @if (item.ShareStatus > 0)
+                                                {
+                                                    if (item.ShareStatus == (int)EnumHelp.BookShareStatus.已取消 && item.OperaAccountId != item.SysAccountId)
+                                                    {
+                                                        <label class="red-line">已被管理员取消</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        string strName = Enum.GetName(typeof(EnumHelp.BookShareStatus), item.ShareStatus);
+                                                        <label class="red-line">@strName</label>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.SysAccount.Account</td>
+                                            <td class="text-center">
+                                                @if (item.PayType > 0)
+                                                {
+                                                    string strName = Enum.GetName(typeof(EnumHelp.ResearchPayType), item.PayType);
+                                                    <label>@strName</label>
+                                                    @item.PayMoney<label>元</label>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.TrafficType > 0)
+                                                {
+                                                    string strName = Enum.GetName(typeof(EnumHelp.ResearchTrafficType), item.TrafficType);
+                                                    <label>@strName</label>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.ShareStatus == (int)EnumHelp.BookShareStatus.待入库)
+                                                {
+                                                    //普通用户 只能"编辑运输信息"和"取消"
+                                                 <a href="/ShareAsideBook/ShareBook?ShareAsideBookId=@item.ShareAsideBookId&SysAccountId=@item.SysAccountId" class="btn btn-info" data-refresh="0"><i class="fa fa-paste padding-right-4"></i>&nbsp;修改运输方式</a>
+                                                  <button onclick="cancle('/ShareAsideBook/BookCancle','/ShareAsideBook/MyShareList','@item.ShareAsideBookId')" class="btn btn-danger"><i class="fa fa-times padding-right-4"></i>&nbsp;取消</button>
+
+                                                }
+                                                else if (item.ShareStatus == (int)EnumHelp.BookShareStatus.已共享)
+                                                {
+                                                    <label><b>图书已共享至系统中，感谢您的分享</b></label>
+                                                }
+                                                else if (item.ShareStatus == (int)EnumHelp.BookShareStatus.已取消)
+                                                {
+                                                    <label><b>图书漂流已取消</b></label>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <a href="/ShareAsideBook/Edit" class="btn btn-info" data-refresh="0"><i class="fa fa-plus padding-right-4"></i>&nbsp;漂出</a>
+                                <a href="/ShareAsideBook/MyShareList" class="btn btn-info" style="margin-left:10px;" data-refresh="0"><i class="fa fa-refresh padding-right-4"></i>&nbsp;刷新</a>
+                            </div>
+                            @Html.Raw(Model.Paging.Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/ViewJs/ShareAsideBook/ShareAsideBookList.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+}
+

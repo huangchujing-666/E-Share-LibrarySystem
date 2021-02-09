@@ -1,0 +1,266 @@
+/*初始化样式*/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {margin:0;padding:0; }
+table {border-collapse:collapse;border-spacing:0;}
+input,textarea{outline-style:none;}
+fieldset,img {border:0;}
+address,caption,cite,code,dfn,em,strong,th,var {font-weight:normal;font-style:normal;}
+ol,ul {list-style:none;}
+caption,th {text-align:left;}
+h1,h2,h3,h4,h5,h6 {font-weight:normal;font-size:100%;}
+q:before,q:after {content:'';}
+abbr,acronym { border:0;}
+p {word-wrap:break-word;}/*ie10*/
+a:active{text-decoration:none !important;}
+a:hover{text-decoration:none !important;}
+a:link{text-decoration: none !important;}
+a:visited{text-decoration: none !important;}
+a{text-decoration: none !important;}
+*{font-family:"微软雅黑";transition:all 1s;}
+.ff_song{font-family:"宋体";}
+.f_left{float: left;padding: 0; margin: 0;}
+.f_right{float: right;padding: 0; margin: 0;}
+select{
+    appearance:none;
+    -moz-appearance:none;
+    -webkit-appearance:none;
+}
+/*初始化样式*/
+body{
+    /*position:relative;*/
+}
+.hc-banner {
+    margin: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+.hc-banner .banner li {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden;
+}
+.bowen {
+    margin: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    position: absolute;
+    top:0;
+    left:0;
+}
+.bowen .bowenBg{
+    width: 100%;
+    height: 50vh;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden;
+}
+@font-face {
+    font-family: 'hanyilinxintijian';
+    src: url('../fonts/hanyilinxintijian.eot');
+    src: local('fontname Regular'),
+    local('fontname'),
+    url('../fonts/hanyilinxintijian.woff') format('woff'),
+    url('../fonts/hanyilinxintijian.ttf') format('truetype'),
+    url('../fonts/hanyilinxintijian.svg#fontname') format('svg');
+}
+
+.indexTitle p {
+    font-family: 'hanyilinxintijian'; /*字体名称,就是上面定义的名称*/
+    font-size: 80px;
+    color: #efefef;
+    text-align: center;
+}
+
+.mainContent {
+    position:absolute;
+    z-index:1;
+    /*background-color:#ccc;*/
+    width: 1000px;
+    height: 100vh;
+    margin-left:-500px;
+    left:50%;
+}
+
+.form-horizontal {
+    width: 300px;
+}
+
+.mainContent .indexForm {
+    position: absolute;
+    bottom: 30px;
+    right:50px;
+
+}
+.mainContent .groupLast{
+    margin-bottom:10px;
+}
+.mainContent .indexList {
+    margin:0 auto;
+    width:280px;
+    margin-top:50px;
+}
+
+.mainContent .indexList p {
+    color: #fff;
+    font-size: 20px;
+    padding-bottom: 10px;
+    letter-spacing: 3px;
+}
+
+.mainContent .indexList span {
+    display: inline-block;
+    border: 1px solid #fff;
+    padding: 0px 3px 0px 5px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.mainContent .welcome {
+    position: absolute;
+    bottom: 70px;
+    left:50px;
+    width: 400px;
+    height: 220px;
+}
+
+.mainContent .welcome p {
+    color: #fff;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.mainContent .welcome h3 {
+    font-size: 22px;
+    color: #fff;
+    font-family: '黑体';
+    font-weight: 900;
+    line-height: 40px;
+}
+
+.mainContent .welcome h4 {
+    font-size: 22px;
+    color: #fff;
+    font-family: '黑体';
+    font-weight: 900;
+    line-height: 40px;
+}
+
+.mainContent .copyright {
+    border-top: 1px solid #fff;
+    width: 900px;
+    left: 50%;
+    bottom: 2px;
+    position: absolute;
+    margin-left:-450px;
+}
+
+.mainContent .copyright p {
+    text-align: left;
+    color: #fff;
+}
+.mainContent .indexForm{
+    color:#808080;
+}
+.mainContent .indexForm select{
+    color:#808080;
+}
+.mainContent .indexForm a{
+    color:#fff;
+}
+.mainContent .indexForm h2{
+    font-size:24px;
+    color:#fff;
+    text-align: center;
+    line-height:40px;
+    font-weight: bold;
+    font-family: '黑体';
+}
+
+
+/*小于1440px*/
+@media only screen and (max-width: 1440px){
+.indexTitle p{
+        font-size: 65px;
+}
+.form-group{
+	margin-bottom:10px;
+}
+.mainContent .indexList{
+	margin-top:10px;
+}
+}
+/*小于1000*/
+@media only screen and (max-width:1000px){
+    .indexTitle p{
+        font-size: 55px;
+    }
+    .form-group{
+        margin-bottom:5px;
+    }
+    .mainContent{
+        width:768px;
+        margin-left:-384px;
+    }
+    .mainContent .welcome{
+        display:none;
+    }
+    .mainContent .indexForm{
+        right:50%;
+        margin-right:-150px;
+    }
+    .mainContent .copyright{
+        width:300px;
+        margin-left:-150px;
+    }
+    .mainContent .groupLast{
+        margin-bottom:5px;
+    }
+}
+/*小于768px*/
+@media screen and (max-width: 768px){
+    .mainContent{
+        width:400px;
+        margin-left:-200px;
+    }
+    .mainContent .indexList{
+
+    }
+    .indexTitle p{
+        
+    }
+    select{
+        width:300px;
+    }
+    .mainContent .indexList{
+        margin-top:15px;
+    }
+}
+/*小于400px*/
+@media screen and (max-width: 414px){
+    .mainContent{
+        width:400px;
+        margin-left:-200px;
+    }
+    .mainContent .indexList{
+
+    }
+    .indexTitle p{
+        font-size:45px;
+    }
+    select{
+        width:300px;
+    }
+    .mainContent .indexList{
+        margin-top:15px;
+    }
+}

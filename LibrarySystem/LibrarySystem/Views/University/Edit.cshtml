@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "数据源编辑";
+}
+@model LibrarySystem.Admin.Models.UniversityViewModel
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        数据源编辑 <small>添加、修改</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <form id="from" class="form-horizontal">
+                        <input type="hidden" class="form-control" name="UniversityId" id="UniversityId" value="@Model.UniversityId">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">是否更新中</label>
+                            <div class="col-sm-4">
+                                <select class="form-control inline" style="width:70%;" name="IsUpdate" id="IsUpdate">
+                                    @if (Model.IsUpdate == (int)LibrarySystem.Domain.EnumHelp.UpdateStartEnum.未启用)
+                                    {
+                                        <option value="@((int)LibrarySystem.Domain.EnumHelp.UpdateStartEnum.未启用)" selected="selected">否</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@((int)LibrarySystem.Domain.EnumHelp.UpdateStartEnum.未启用)">否</option>
+                                    }
+                                    @if (Model.IsUpdate == (int)LibrarySystem.Domain.EnumHelp.UpdateStartEnum.启用)
+                                    {
+                                        <option value="@((int)LibrarySystem.Domain.EnumHelp.UpdateStartEnum.启用)" selected="selected">是</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@((int)LibrarySystem.Domain.EnumHelp.UpdateStartEnum.启用)">是</option>
+                                    }
+                                </select>
+                            </div>
+                            <label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">学校名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="学校名称" name="Name" id="Name" value="@(Model.Name??"")">
+                            </div>
+                            <label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">数据库服务</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入数据库服务" name="Service" id="Service" value="@(Model.Service??"")">
+                            </div>
+                            <label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">数据库名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入数据库名称" name="DataBase" id="DataBase" value="@(Model.DataBase??"")">
+                            </div>
+                            <label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">用户ID</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入用户ID" name="UserId" id="UserId" value="@(Model.UserId??"")">
+                            </div>
+                            <label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">用户密码</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入用户密码" name="UserPwd" id="UserPwd" value="@(Model.UserPwd??"")">
+                            </div>
+                            <label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">更新间隔</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" placeholder="请输入时间间隔" name="TimeStart" id="TimeStart" value="@(Model.TimeStart)">
+                            </div>
+                            <label class="red-line">*（单位为分钟）</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button id="btnSave" class="btn btn-primary" type="button">保存内容</button>
+                                <a class="btn btn-white" href="javascript:history.go(-1);">取消</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/ViewJs/University/UniversityEdit.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+}

@@ -1,0 +1,168 @@
+﻿@{
+    ViewBag.Title = "图书运输方式";
+}
+@using LibrarySystem.Admin.Common;
+@model LibrarySystem.Admin.Models.AsideBookOrderVM
+@using LibrarySystem.Domain
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        图书运输方式编辑 <small>添加、修改</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal">
+                        <input type="hidden" name="AsideBookInfoId" id="AsideBookInfoId" value="@Model.AsideBookInfoId">
+                        <input type="hidden" name="AsideBookOrderId" id="AsideBookOrderId" value="@Model.AsideBookOrderId">
+                        <input type="hidden" name="SysAccountId" id="SysAccountId" value="@Model.SysAccountId">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收件人所在学校</label>
+                            <div class="col-sm-4">
+                                @*如果是进行编辑*@
+                                @if (Model.AsideBookOrderId > 0)
+                                    {
+                                    <select class="form-control inline" disabled="disabled" style="width:150px;" name="UniversityId" id="UniversityId">
+                                        <option value="0">请选择所在学校</option>
+                                        @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                            {
+                                                foreach (var item in Model.UinversityList)
+                                                {
+                                                    if (Model.UniversityId == @item.UniversityId)
+                                                    {
+                                            <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                            <option value="@item.UniversityId">@item.Name</option>
+                                                    }
+
+                                                }
+                                            }
+                                    </select>
+                                    }
+                                    @*如果是漂入者，默认选中他学校的id*@
+                                    else
+                                    {
+                                    <select class="form-control inline" disabled="disabled" style="width:150px;" name="UniversityId" id="UniversityId">
+                                        <option value="0">请选择所在学校</option>
+                                        @if (Model != null && Model.UinversityList != null && Model.UinversityList.Count > 0)
+                                            {
+                                                foreach (var item in Model.UinversityList)
+                                                {
+                                                    if (LibrarySystem.Admin.Common.Loginer.UniversityId == @item.UniversityId)
+                                                    {
+                                            <option value="@item.UniversityId" selected="selected">@item.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                            <option value="@item.UniversityId">@item.Name</option>
+                                                    }
+
+                                                }
+                                            }
+                                    </select>
+                                    }
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电子邮箱</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入电子邮箱" maxlength="100" name="Email" id="Email" value="@(Model.Email??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系方式</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="请输入联系方式" maxlength="100" name="MobilePhone" id="MobilePhone" value="@(Model.MobilePhone??"")">
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">运输方式</label>
+                            <div class="col-sm-4">
+                                <select class="form-control inline" style="width:60%;" onchange="selectChange()" name="TrafficType" id="TrafficType">
+                                    <option value="0">请选择运输方式</option>
+                                    @foreach (int myCode in Enum.GetValues(typeof(EnumHelp.TrafficType)))
+                                        {
+                                            string strName = Enum.GetName(typeof(EnumHelp.TrafficType), myCode);//获取名称
+                                            string strVaule = myCode.ToString();//获取值
+                                            if (Model.QueryOrderStatus == int.Parse(strVaule))
+                                            {
+                                        <option value="@strVaule" selected="selected">@strName</option>
+                                            }
+                                            else
+                                            {
+                                        <option value="@strVaule">@strName</option>
+                                            }
+                                        }
+                                </select>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group traffic-select" style="display:none;">
+                            <label class="col-sm-2 control-label">补偿费用</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" placeholder="请输入补偿费用" maxlength="100" name="TrafficFee" id="TrafficFee" value="@(Model.TrafficFee)">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed traffic-select" style="display:none;"></div>
+                        <div class="form-group traffic-select traffic-address" style="display:none;">
+                            <label class="col-sm-2 control-label">联系地址</label>
+                            <div class="col-sm-4">
+                                <textarea placeholder="请输入联系地址。如：广州市天河区中山大道西293号 广东技术师范大学 学生宿舍A栋101室" id="Address" name="Address" cols="50" rows="5" style="overflow:hidden">@Model.Address</textarea>
+                            </div><label class="red-line">*</label>
+                        </div>
+                        <div class="hr-line-dashed traffic-select  traffic-address" style="display:none;"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button id="btnSave" class="btn btn-primary" type="button">保存内容</button>
+                                <a class="btn btn-white" href="javascript:history.go(-1);">取消</a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section script{
+    <script src="@("/Scripts/plugins/fileinput/fileinput.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/plugins/fileinput/zh.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script src="@("/Scripts/ViewJs/AsideBookInfo/PreBookEdit.js"+LibrarySystem.Admin.Versions.Ver)"></script>
+    <script type="text/javascript">
+        function selectChange() {
+            var TrafficType = $('#TrafficType option:selected');
+            //var trafficTypesel=  document.getElementsByClassName("traffic-select");
+            //var address=document.getElementsByClassName("traffic-address");
+            switch (parseInt(TrafficType.val())) {
+                case 1://EnumHelp.TrafficType.自取
+                    //trafficType.style.display=none;
+                    $(".traffic-select").css("display", "none");
+                    //$("#aucTime").css("display","block");
+                    break;
+                case 2://EnumHelp.TrafficType.邮寄
+                    $(".traffic-select").css("display", "none");
+                    $(".traffic-address").css("display", "block");
+                    //trafficType.style.display=none;
+                    //address.style.display=block;
+                    break;
+                case 3://EnumHelp.TrafficType.顺路送书
+                    //trafficType.style.display=block;
+                    $(".traffic-select").css("display", "block");
+                    break;
+                default:
+                    //trafficType.style.display=none;
+                    $(".traffic-select").css("display", "none");
+            }
+        }
+    </script>
+}
+
